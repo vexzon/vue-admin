@@ -16,7 +16,7 @@
       <el-form
         :model="ruleForm"
         status-icon
-        :rules="rules"
+        :rules="loginFromRuls"
         ref="ruleForm"
         class="demo-ruleForm login-form"
         size="small"
@@ -29,14 +29,26 @@
             autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item prop="pass" class="item-from">
+        <el-form-item prop="password" class="item-from">
           <label for="">密码</label>
           <el-input
             type="password"
-            v-model="ruleForm.pass"
+            v-model="ruleForm.password"
             autocomplete="off"
             minlength="6"
             maxlength="20"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          prop="passwords"
+          class="item-from"
+          v-show="menuTab[1].current"
+        >
+          <label for="">重复密码</label>
+          <el-input
+            type="passwords"
+            v-model="ruleForm.passwords"
+            autocomplete="off"
           ></el-input>
         </el-form-item>
         <el-form-item prop="code" class="item-from">
@@ -72,38 +84,51 @@
   </div>
 </template>
 <script>
+import { isEmail, isPassword, isCode } from "@/utils/validate";
 export default {
   name: "Login",
+  components: {},
   data() {
     // 登录注册验证
     // 邮箱验证
     var validateEmail = (rule, value, callback) => {
-      let reg = /^([a-zA-Z]|[0-9])(\w|-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
       if (value === "") {
         callback(new Error("请输入邮箱"));
-      } else if (!reg.test(value)) {
-        callback(new Error("用户名输入错误"));
+      } else if (isEmail(value)) {
+        callback(new Error("邮箱输入或格式错误"));
       } else {
         callback();
       }
     };
     // 密码验证
-    var validatePass = (rule, value, callback) => {
-      let reg = /^(?!\D+$)(?![^a-zA-Z]+$)\S{6,20}$/;
+    var validatePassword = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入密码"));
-      } else if (!reg.test(value)) {
-        callback(new Error("密码为6到20位数字、字母"));
+      } else if (isPassword(value)) {
+        callback(new Error("密码为6到20位,至少有一个数字和一个字母"));
+      } else {
+        callback();
+      }
+    };
+    //确认重复密码
+    var validatePasswords = (rule, value, callback) => {
+      // 如果模块值为login，直接通过
+      if (this.menuTab[0].current == true) {
+        callback();
+      }
+      if (value === "") {
+        callback(new Error("请输入确认密码"));
+      } else if (value != this.ruleForm.password) {
+        callback(new Error("密码输入不一致"));
       } else {
         callback();
       }
     };
     // 验证码验证
     var validateCode = (rule, value, callback) => {
-      let reg = (reg = /^[a-z0-9]{6}$/);
       if (value === "") {
         callback(new Error("请输入验证码"));
-      } else if (!reg.test(value)) {
+      } else if (isCode(value)) {
         callback(new Error("请输入6位验证码"));
       } else {
         callback();
@@ -115,15 +140,17 @@ export default {
         { txt: "登录", current: true },
         { txt: "注册", current: false }
       ],
-      // 登录注册验证
+      // 登录数据绑定对象
       ruleForm: {
         email: "",
-        pass: "",
+        password: "",
+        passwords: "",
         code: ""
       },
-      rules: {
+      loginFromRuls: {
         email: [{ validator: validateEmail, trigger: "blur" }],
-        pass: [{ validator: validatePass, trigger: "blur" }],
+        password: [{ validator: validatePassword, trigger: "blur" }],
+        passwords: [{ validator: validatePasswords, trigger: "blur" }],
         code: [{ validator: validateCode, trigger: "blur" }]
       }
     };
@@ -152,6 +179,7 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     }
+    // 过滤特殊函数
   }
 };
 </script>
