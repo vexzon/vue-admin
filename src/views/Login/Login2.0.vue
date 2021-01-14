@@ -17,23 +17,21 @@
         :model="ruleForm"
         status-icon
         :rules="loginFromRuls"
-        ref="loginForm"
+        ref="ruleForm"
         class="demo-ruleForm login-form"
         size="small"
       >
         <el-form-item prop="email" class="item-from">
-          <label for="userName">邮箱</label>
+          <label for="">邮箱</label>
           <el-input
-            id="userName"
             type="text"
             v-model="ruleForm.email"
             autocomplete="off"
           ></el-input>
         </el-form-item>
         <el-form-item prop="password" class="item-from">
-          <label for="password">密码</label>
+          <label for="">密码</label>
           <el-input
-            id="password"
             type="password"
             v-model="ruleForm.password"
             autocomplete="off"
@@ -46,24 +44,21 @@
           class="item-from"
           v-show="menuTab[1].current"
         >
-          <label for="passwords">重复密码</label>
+          <label for="">重复密码</label>
           <el-input
-            id="passwords"
             type="passwords"
             v-model="ruleForm.passwords"
             autocomplete="off"
           ></el-input>
         </el-form-item>
         <el-form-item prop="code" class="item-from">
-          <label for="code">验证码</label>
+          <label for="">验证码</label>
           <el-row :gutter="10">
             <el-col :span="14"
-              ><el-input id="code" v-model="ruleForm.code"></el-input
+              ><el-input v-model="ruleForm.code"></el-input
             ></el-col>
             <el-col :span="10">
-              <el-button type="success" class="block" @click="getSms()"
-                >获取验证码</el-button
-              >
+              <el-button type="success" class="block">获取验证码</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -74,7 +69,7 @@
                 type="primary"
                 class="login-btn block"
                 @click="submitForm('ruleForm')"
-                >{{ menuTab[0].current === true ? "登录" : "注册" }}</el-button
+                >提交</el-button
               ></el-col
             >
             <el-col :span="12"
@@ -89,32 +84,14 @@
   </div>
 </template>
 <script>
-import { GetSms } from "@/api/login";
-import { onMounted, reactive } from "@vue/composition-api";
 import { isEmail, isPassword, isCode } from "@/utils/validate";
 export default {
   name: "Login",
-
-  setup(props, { refs, root }) {
-    // 放置data数据、生命周期、自定义函数
-    onMounted(() => {});
-    // 登录 注册 名字
-    const menuTab = reactive([
-      { txt: "登录", current: true },
-      { txt: "注册", current: false }
-    ]);
-    // 模块值
-    // 声明函数
-    // 登录数据绑定对象
-    const ruleForm = reactive({
-      email: "",
-      password: "",
-      passwords: "",
-      code: ""
-    });
+  components: {},
+  data() {
     // 登录注册验证
     // 邮箱验证
-    let validateEmail = (rule, value, callback) => {
+    var validateEmail = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入邮箱"));
       } else if (isEmail(value)) {
@@ -124,7 +101,7 @@ export default {
       }
     };
     // 密码验证
-    let validatePassword = (rule, value, callback) => {
+    var validatePassword = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入密码"));
       } else if (isPassword(value)) {
@@ -134,14 +111,14 @@ export default {
       }
     };
     //确认重复密码
-    let validatePasswords = (rule, value, callback) => {
+    var validatePasswords = (rule, value, callback) => {
       // 如果模块值为login，直接通过
-      if (menuTab[0].current == true) {
+      if (this.menuTab[0].current == true) {
         callback();
       }
       if (value === "") {
         callback(new Error("请输入确认密码"));
-      } else if (value != ruleForm.password) {
+      } else if (value != this.ruleForm.password) {
         callback(new Error("密码输入不一致"));
       } else {
         callback();
@@ -157,60 +134,40 @@ export default {
         callback();
       }
     };
-    // 表单验证
-    const loginFromRuls = reactive({
-      email: [{ validator: validateEmail, trigger: "blur" }],
-      password: [{ validator: validatePassword, trigger: "blur" }],
-      passwords: [{ validator: validatePasswords, trigger: "blur" }],
-      code: [{ validator: validateCode, trigger: "blur" }]
-    });
-    // 声明函数
+    return {
+      // 登录 注册 名字
+      menuTab: [
+        { txt: "登录", current: true },
+        { txt: "注册", current: false }
+      ],
+      // 登录数据绑定对象
+      ruleForm: {
+        email: "",
+        password: "",
+        passwords: "",
+        code: ""
+      },
+      loginFromRuls: {
+        email: [{ validator: validateEmail, trigger: "blur" }],
+        password: [{ validator: validatePassword, trigger: "blur" }],
+        passwords: [{ validator: validatePasswords, trigger: "blur" }],
+        code: [{ validator: validateCode, trigger: "blur" }]
+      }
+    };
+  },
+  methods: {
     // 登录 注册切换
-    const toggleMenu = data => {
-      menuTab.forEach(e => {
+    toggleMenu(data) {
+      console.log(data);
+      this.menuTab.forEach(e => {
+        console.log(e);
         e.current = false;
       });
       data.current = true;
-      // 重置表单
-      refs.loginForm.resetFields();
-    };
-
-    // 获取验证码
-    const getSms = () => {
-      // 提示
-      if (ruleForm.email == "") {
-        root.$message.error("邮箱不能为空");
-        return false;
-      }
-      if (isEmail(ruleForm.email)) {
-        root.$message.error("邮箱有误，请重新输入");
-        return false;
-      }
-      // 获取验证码
-      let requestData = {
-        username: ruleForm.email,
-        module: menuTab[0].current === true ? "login" : "register"
-      };
-      // 请求接口
-      GetSms(requestData)
-        .then(res => {
-          let data = res.data;
-          root.$notify({
-            message: data.message,
-            type: "success"
-          });
-          console.log(res);
-          console.log(data);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    };
-
-    // 提交表单
+    },
     // 登录注册验证方法
-    const submitForm = formName => {
-      refs[formName].validate(valid => {
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
         if (valid) {
           alert("submit!");
         } else {
@@ -218,20 +175,11 @@ export default {
           return false;
         }
       });
-    };
-    const resetForm = formName => {
-      refs[formName].resetFields();
-    };
-
-    return {
-      menuTab,
-      toggleMenu,
-      submitForm,
-      resetForm,
-      ruleForm,
-      loginFromRuls,
-      getSms
-    };
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    }
+    // 过滤特殊函数
   }
 };
 </script>
