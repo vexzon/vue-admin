@@ -98,6 +98,7 @@
 import { GetSms, Register, Login } from "@/api/login";
 import { onMounted, reactive, ref } from "@vue/composition-api";
 import { isEmail, isPassword, isCode } from "@/utils/validate";
+import sha1 from "js-sha1";
 export default {
   name: "Login",
 
@@ -178,6 +179,9 @@ export default {
       code: [{ validator: validateCode, trigger: "blur" }]
     });
     // 声明函数
+
+    // 切换模块
+
     // 登录 注册切换
     const toggleMenu = data => {
       menuTab.forEach(e => {
@@ -186,7 +190,18 @@ export default {
       });
       data.current = true;
       // 重置表单
+      resetFormData();
+    };
+
+    // 清除表单数据
+    const resetFormData = () => {
       refs.loginForm.resetFields();
+    };
+
+    // 更新按钮状态
+    const updataButtonStatus = params => {
+      codeButtonStatus.status = params.status;
+      codeButtonStatus.text = params.text;
     };
 
     // 获取验证码
@@ -205,7 +220,11 @@ export default {
         username: ruleForm.email,
         module: menuTab[0].current === true ? "login" : "register"
       };
-      (codeButtonStatus.status = true), (codeButtonStatus.text = "发送中");
+      updataButtonStatus({
+        status: true,
+        text: "发送中"
+      });
+
       // 请求延长时间
       setTimeout(() => {
         // 请求接口
@@ -218,8 +237,10 @@ export default {
           })
           .catch(err => {
             root.$alert("获取失败");
-            (codeButtonStatus.status = false),
-              (codeButtonStatus.text = "获取验证码");
+            updataButtonStatus({
+              status: false,
+              text: "获取验证码"
+            });
             console.log(err);
           });
       }, 2000);
@@ -242,7 +263,7 @@ export default {
     const login = () => {
       let requsetData = {
         username: ruleForm.email,
-        password: ruleForm.password,
+        password: sha1(ruleForm.password),
         code: ruleForm.code,
         module: "register"
       };
@@ -258,7 +279,7 @@ export default {
     const register = () => {
       let requsetData = {
         username: ruleForm.email,
-        password: ruleForm.password,
+        password: sha1(ruleForm.password),
         code: ruleForm.code,
         module: "register"
       };
@@ -290,8 +311,10 @@ export default {
         time--;
         if (time === 0) {
           clearInterval(timer.value);
-          codeButtonStatus.status = false;
-          codeButtonStatus.text = "获取验证码";
+          updataButtonStatus({
+            status: false,
+            text: "获取验证码"
+          });
         } else {
           codeButtonStatus.text = `倒计时${time}秒`;
         }
@@ -300,8 +323,10 @@ export default {
     // 清除倒计时
     const clearCountDown = () => {
       // 还原验证码按钮状态
-      codeButtonStatus.status = false;
-      codeButtonStatus.text = "获取验证码";
+      updataButtonStatus({
+        status: false,
+        text: "获取验证码"
+      });
       // 清除倒计时
       clearInterval(timer.value);
       // const codeButtonStatus = reactive({
@@ -333,10 +358,6 @@ export default {
   height: 100vh;
   background-color: #344a5f;
 }
-.block {
-  display: block;
-  width: 100%;
-}
 
 /*登录注册 */
 .login-wrap {
@@ -345,7 +366,8 @@ export default {
 
   .menu-tab {
     text-align: center;
-
+    margin: 0;
+    padding-top: 100%;
     li {
       display: inline-block;
       width: 88px;
@@ -371,5 +393,9 @@ export default {
 }
 .item-from {
   margin-bottom: 15px;
+}
+.block {
+  display: block;
+  width: 100%;
 }
 </style>
