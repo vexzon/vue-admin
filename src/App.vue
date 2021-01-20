@@ -8,6 +8,5 @@
 </template>
 
 <style lang="scss" scoped>
-@import "./styles/normalize.css";
 @import "./styles/main.scss";
 </style>

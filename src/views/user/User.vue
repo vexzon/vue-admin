@@ -1,5 +1,7 @@
 <template>
-  <div>asdada</div>
+  <div>
+    sdadfafas
+  </div>
 </template>
 <script>
 export default {};

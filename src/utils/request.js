@@ -4,19 +4,19 @@ import { Message } from "element-ui";
 const BASEURL = process.env.NODE_ENV === "production" ? "" : "/devapi";
 const service = axios.create({
   baseURL: BASEURL,
-  timeout: 1000
+  timeout: 2000
 });
 
 // 添加请求拦截器
 // 请求接口前，做一些数据处理（请求拦截器）
 service.interceptors.request.use(
   function(config) {
-    console.log(config.headers);
+    // console.log(config.headers);
     // 业务需求
     // 最终目的是在请求头添加参数
-    config.headers.Token = "1111";
-    config.headers.userId = "22222";
-    config.headers.sui = "33333";
+    // config.headers.Token = "1111";
+    // config.headers.userId = "22222";
+    // config.headers.sui = "33333";
 
     return config;
   },

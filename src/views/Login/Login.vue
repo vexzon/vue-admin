@@ -55,7 +55,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item prop="code" class="item-from">
-          <label for="code">验证码</label>
+          <label>验证码</label>
           <el-row :gutter="10">
             <el-col :span="14"
               ><el-input id="code" v-model="ruleForm.code"></el-input
@@ -269,6 +269,9 @@ export default {
       };
       Login(requsetData)
         .then(res => {
+          root.$router.push({
+            name: "Console"
+          });
           console.log(res);
         })
         .catch(err => {
