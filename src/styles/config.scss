@@ -2,3 +2,19 @@
 
 // 菜单宽度
 $navMenu: 250px;
+$navMenuMini: 64px;
+$layoutHeader: 75px;
+
+// 主颜色
+$mainColor: rgba(245, 108, 108, 0.7);
+
+// 辅助色
+
+
+@mixin webkit($type, $value) {
+  -webkit-#{$type}: $value;
+  -moz-#{$type}: $value;
+  -o-#{$type}: $value;
+  -ms-#{$type}: $value;
+  #{$type}: $value;
+}

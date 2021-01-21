@@ -1,13 +1,23 @@
 <template>
   <div id="main-wrap">
     <div class="main-content">
-      <div class="content">adagfasd</div>
+      <div class="content"><router-view></router-view></div>
     </div>
-    <router-view></router-view>
   </div>
 </template>
 <script>
-export default {};
+import {} from "@vue/composition-api";
+export default {
+  name: "LayoutMain",
+  setup() {
+    // const str = ref('{"name":"前端","title":"aaaa"}');
+    // // 字符串转对象
+    // const json = reactive(JSON.parse(str.value));
+    // console.log(str.value);
+    // console.log(json);
+    // console.log(json.name);
+  }
+};
 </script>
 <style lang="scss" scoped>
 @import "../../../styles/config.scss";
@@ -27,9 +37,9 @@ export default {};
   height: 100%;
   width: 100%;
   padding-top: 100px;
-  padding-left: $navMenu + 20;
   padding-right: 20px;
   box-sizing: border-box;
+  @include webkit(transition, all 0.3s ease 0s);
 }
 .content {
   width: 100%;
@@ -37,5 +47,15 @@ export default {};
   padding: 20px 20px 0 20px;
   box-sizing: border-box;
   background-color: #ffffff;
+}
+.open {
+  .main-content {
+    padding-left: $navMenu + 20;
+  }
+}
+.close {
+  .main-content {
+    padding-left: $navMenuMini + 30;
+  }
 }
 </style>

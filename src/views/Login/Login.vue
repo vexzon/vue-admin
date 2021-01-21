@@ -95,7 +95,7 @@
   </div>
 </template>
 <script>
-import { GetSms, Register, Login } from "@/api/login";
+import { GetSms, Register } from "@/api/login";
 import { onMounted, reactive, ref } from "@vue/composition-api";
 import { isEmail, isPassword, isCode } from "@/utils/validate";
 import sha1 from "js-sha1";
@@ -267,7 +267,8 @@ export default {
         code: ruleForm.code,
         module: "register"
       };
-      Login(requsetData)
+      root.$store
+        .dispatch("app/login", requsetData)
         .then(res => {
           root.$router.push({
             name: "Console"
@@ -277,6 +278,16 @@ export default {
         .catch(err => {
           console.log(err);
         });
+      // Login(requsetData)
+      // .then(res => {
+      //   root.$router.push({
+      //     name: "Console"
+      //   });
+      //   console.log(res);
+      // })
+      // .catch(err => {
+      //   console.log(err);
+      // });
     };
     // 注册
     const register = () => {

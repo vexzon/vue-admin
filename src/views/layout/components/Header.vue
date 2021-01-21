@@ -1,6 +1,8 @@
 <template>
   <div id="header-wrap">
-    <div class="icon-style"><i class="el-icon-menu"></i></div>
+    <div class="icon-style" @click="navMenuState">
+      <i class="el-icon-menu"></i>
+    </div>
     <div class="user-style">
       <div class="user-info">
         <img src="../../../assets/icon-user.jpg" alt="" />
@@ -11,7 +13,17 @@
   </div>
 </template>
 <script>
-export default {};
+export default {
+  name: "LayoutHeader",
+  setup(props, { root }) {
+    const navMenuState = () => {
+      root.$store.commit("app/setCollapse");
+    };
+    return {
+      navMenuState
+    };
+  }
+};
 </script>
 <style lang="scss" scoped>
 @import "../../../styles/config.scss";
@@ -19,12 +31,22 @@ export default {};
   position: fixed;
   top: 0;
   right: 0;
-  left: $navMenu;
   height: 75px;
   background-color: #fff;
   box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: space-between;
+  @include webkit(transition, all 0.3s ease 0s);
+}
+.open {
+  #header-wrap {
+    left: $navMenu;
+  }
+}
+.close {
+  #header-wrap {
+    left: $navMenuMini;
+  }
 }
 .icon-style {
   font-size: 36px;

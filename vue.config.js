@@ -2,7 +2,7 @@ const path = require("path");
 module.exports = {
   // 基本路径
   // publicPath: process.env.NODE_ENV === "production" ? "" : "./",
-  // // 输出文件目录
+  // // // 输出文件目录
   // outputDir: process.env.NODE_ENV === "production" ? "dist" : "devdist",
   // // eslint-loader 是否在保存的时候检查
   // lintOnSave: false,
@@ -20,31 +20,31 @@ module.exports = {
   //       include: ["./src/icons"]
   //     });
   // },
-  // configureWebpack: config => {
-  //   config.resolve = {
-  //     // 配置解析别名
-  //     extensions: [".js", ".json", ".vue"], // 自动添加文件名后缀
-  //     alias: {
-  //       "@": path.resolve(__dirname, "./src"),
-  //       "@c": path.resolve(__dirname, "./src/components")
-  //     }
-  //   };
-  // },
+  configureWebpack: config => {
+    config.resolve = {
+      // 配置解析别名
+      extensions: [".js", ".json", ".vue"], // 自动添加文件名后缀
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+        "@c": path.resolve(__dirname, "./src/components")
+      }
+    };
+  },
   // // 生产环境是否生成 sourceMap 文件
   // productionSourceMap: false,
   // // css相关配置
-  // css: {
-  //   // 是否使用css分离插件 ExtractTextPlugin
-  //   extract: true,
-  //   // 开启 CSS source maps?
-  //   sourceMap: false,
-  //   // css预设器配置项
-  //   loaderOptions: {
-  //     scss: {
-  //       prependData: `@import "./src/styles/main.scss";`
-  //     }
-  //   }
-  // },
+  css: {
+    //   // 是否使用css分离插件 ExtractTextPlugin
+    extract: true,
+    //   // 开启 CSS source maps?
+    sourceMap: false,
+    //   // css预设器配置项
+    loaderOptions: {
+      scss: {
+        prependData: `@import "./src/styles/main.scss";`
+      }
+    }
+  },
   // // use thread-loader for babel & TS in production build
   // // enabled by default if the machine has more than 1 cores
   // parallel: require("os").cpus().length > 1,
@@ -62,10 +62,10 @@ module.exports = {
     hotOnly: false,
     proxy: {
       "/devapi": {
-        target: "http://www.web-jshtml.cn", //API服务器的地址
+        target: "http://www.web-jshtml.cn/productapi/toKen", //API服务器的地址
         changeOrigin: true,
         pathRewrite: {
-          "^/devapi": "/productapi"
+          "^/devapi": ""
         }
       }
 

@@ -24,9 +24,12 @@ const routes = [
     },
     component: () => import("@/views/login/Login.vue")
   },
+
+  // 控制台
   {
     path: "/console",
     name: "Console",
+    redirect: "/index",
     meta: {
       name: "控制台",
       icon: "el-icon-s-help"
