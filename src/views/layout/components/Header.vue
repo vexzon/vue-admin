@@ -6,21 +6,34 @@
     <div class="user-style">
       <div class="user-info">
         <img src="../../../assets/icon-user.jpg" alt="" />
-        <span>管理员</span>
+        <span>{{ username }}</span>
       </div>
-      <div class="header-icon"><i class="el-icon-close"></i></div>
+      <div class="header-icon" @click="exit"><i class="el-icon-close"></i></div>
     </div>
   </div>
 </template>
 <script>
+import { computed } from "@vue/composition-api";
 export default {
   name: "LayoutHeader",
   setup(props, { root }) {
+    const username = computed(() => root.$store.state.app.username);
     const navMenuState = () => {
       root.$store.commit("app/setCollapse");
     };
+
+    // 退出
+    const exit = () => {
+      root.$store.dispatch("app/exit").then(() => {
+        root.$router.push({
+          name: "Login"
+        });
+      });
+    };
     return {
-      navMenuState
+      navMenuState,
+      username,
+      exit
     };
   }
 };

@@ -269,11 +269,10 @@ export default {
       };
       root.$store
         .dispatch("app/login", requsetData)
-        .then(res => {
+        .then(() => {
           root.$router.push({
             name: "Console"
           });
-          console.log(res);
         })
         .catch(err => {
           console.log(err);

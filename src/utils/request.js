@@ -11,13 +11,6 @@ const service = axios.create({
 // 请求接口前，做一些数据处理（请求拦截器）
 service.interceptors.request.use(
   function(config) {
-    // console.log(config.headers);
-    // 业务需求
-    // 最终目的是在请求头添加参数
-    // config.headers.Token = "1111";
-    // config.headers.userId = "22222";
-    // config.headers.sui = "33333";
-
     return config;
   },
   function(error) {

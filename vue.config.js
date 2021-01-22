@@ -1,9 +1,9 @@
 const path = require("path");
 module.exports = {
   // 基本路径
-  // publicPath: process.env.NODE_ENV === "production" ? "" : "./",
+  publicPath: process.env.NODE_ENV === "production" ? "" : "./",
   // // // 输出文件目录
-  // outputDir: process.env.NODE_ENV === "production" ? "dist" : "devdist",
+  outputDir: process.env.NODE_ENV === "production" ? "dist" : "devdist",
   // // eslint-loader 是否在保存的时候检查
   // lintOnSave: false,
   // /** vue3.0内置了webpack所有东西，
@@ -47,7 +47,7 @@ module.exports = {
   },
   // // use thread-loader for babel & TS in production build
   // // enabled by default if the machine has more than 1 cores
-  // parallel: require("os").cpus().length > 1,
+  parallel: require("os").cpus().length > 1,
   // /**
   //  *  PWA 插件相关配置,see https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa
   //  */
@@ -62,7 +62,7 @@ module.exports = {
     hotOnly: false,
     proxy: {
       "/devapi": {
-        target: "http://www.web-jshtml.cn/productapi/toKen", //API服务器的地址
+        target: "http://www.web-jshtml.cn/productapi/token", //API服务器的地址
         changeOrigin: true,
         pathRewrite: {
           "^/devapi": ""
