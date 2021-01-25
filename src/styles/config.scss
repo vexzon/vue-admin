@@ -10,11 +10,23 @@ $mainColor: rgba(245, 108, 108, 0.7);
 
 // 辅助色
 
-
 @mixin webkit($type, $value) {
   -webkit-#{$type}: $value;
   -moz-#{$type}: $value;
   -o-#{$type}: $value;
   -ms-#{$type}: $value;
   #{$type}: $value;
+}
+
+@mixin labelDom($algin, $width, $line-height: "normal") {
+  label {
+    float: left;
+    line-height: $line-height + px;
+    width: $width + px;
+    text-align: $algin;
+  }
+  .warp-content {
+    margin-left: $width + px;
+  }
+ 
 }
