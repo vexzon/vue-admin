@@ -1,70 +1,174 @@
 <template>
-  <div>
-    <el-row type="flex" class="row-bg" :gutter="20">
-      <el-col :span="3"
-        ><div class="label-warp category grid-content bg-purple">
-          <label for="">类型:</label>
-          <div class="warp-content" style="width:100%">
-            <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
-              </el-option>
-            </el-select>
-          </div></div
-      ></el-col>
-      <el-col :span="8"
-        ><div
-          class="label-warp date grid-content bg-purple-light"
-          style="width:100%"
+  <div id="category">
+    <el-button type="danger">添加一级分类</el-button>
+    <el-divider></el-divider>
+    <div>
+      <el-row :gutter="30">
+        <el-col :span="10"
+          ><div class="category">
+            <h4>
+              <i class="el-icon-plus"></i>
+              新闻
+              <div class="button-group">
+                <el-button size="mini" round type="success">编辑</el-button>
+                <el-button size="mini" round type="primary">添加子集</el-button>
+                <el-button size="mini" round type="danger">删除</el-button>
+              </div>
+            </h4>
+            <ul>
+              <li>
+                国内
+                <div class="button-group">
+                  <el-button size="mini" round type="success">编辑</el-button>
+                  <el-button size="mini" round type="danger">删除</el-button>
+                </div>
+              </li>
+              <li>国外</li>
+              <li>信息</li>
+            </ul>
+          </div>
+          <div class="category">
+            <h4><i class="el-icon-plus"></i>新闻</h4>
+            <ul>
+              <li>国内</li>
+              <li>国外</li>
+              <li>信息</li>
+            </ul>
+          </div></el-col
         >
-          <label for="">日期: </label>
-          <div class="warp-content">
-            <el-date-picker
-              v-model="value2"
-              type="datetimerange"
-              align="right"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :default-time="['12:00:00', '08:00:00']"
-            >
-            </el-date-picker>
-          </div></div
-      ></el-col>
-      <el-col :span="8"><div class="grid-content bg-purple"></div></el-col>
-      <el-col :span="2"><div class="grid-content bg-purple"></div></el-col>
-      <el-col :span="3"><div class="grid-content bg-purple"></div></el-col>
-    </el-row>
+        <el-col :span="14">
+          <h4 class="menu-title">一级分类编辑</h4>
+          <el-form
+            :label-position="labelPosition"
+            label-width="140px"
+            :model="formLabelAlign"
+            class="category-editer"
+          >
+            <el-form-item label="一级分类名称：">
+              <el-input v-model="formLabelAlign.name"></el-input>
+            </el-form-item>
+            <el-form-item label="二级分类名称：">
+              <el-input v-model="formLabelAlign.name"></el-input>
+            </el-form-item>
+            <el-for-item>
+              <el-button class="editer-button" type="danger">提交</el-button>
+            </el-for-item>
+          </el-form>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
+<script>
+import { reactive, ref } from "@vue/composition-api";
+export default {
+  name: "InfoCategory",
+  setup() {
+    const labelPosition = ref("right");
+    const formLabelAlign = reactive({
+      name: "adafhjoasj"
+    });
+    return {
+      labelPosition,
+      formLabelAlign
+    };
+  }
+};
+</script>
 <style lang="scss" scoped>
-.el-row {
-  margin-bottom: 20px;
+li {
+  list-style-type: none;
+}
+ul,
+h4 {
+  padding: 0;
+  margin: 0;
+}
+
+// 添加分类
+.menu-title {
+  line-height: 44px;
+  background-color: f3f3f3;
+  padding-left: 22px;
+}
+.category {
+  position: relative;
+  line-height: 44px;
+
+  &:first-child {
+    &::before {
+      top: 20px;
+    }
+  }
+
   &:last-child {
-    margin-bottom: 0;
+    &::before {
+      bottom: 21px;
+    }
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    width: 32px;
+    left: 22px;
+    top: 0;
+    bottom: 0;
+    border-left: 1px dotted #ccc;
+  }
+  h4 {
+    padding-left: 40px;
+    position: relative;
+
+    i {
+      position: absolute;
+      border: 1px solid #000;
+      color: #000;
+      font-size: 5px;
+      top: 15px;
+      left: 15px;
+    }
+  }
+  li {
+    padding-left: 36px;
+    margin-left: 24px;
+    position: relative;
+    &::before {
+      content: "";
+      position: absolute;
+      width: 32px;
+      left: 0;
+      top: 22px;
+      border-bottom: 1px dotted #ccc;
+    }
+  }
+  h4,
+  li {
+    cursor: pointer;
+    &:hover {
+      background-color: #f3f3f3;
+      .button-group {
+        display: block;
+      }
+    }
   }
 }
-.el-col {
-  border-radius: 4px;
+.button-group {
+  display: none;
+  position: absolute;
+  right: 11px;
+  z-index: 2;
+  font-size: 12px;
+  top: 0;
 }
-.bg-purple-dark {
-  background: #99a9bf;
+
+// 分类编辑
+.category-editer {
+  width: 500px;
 }
-.bg-purple {
-  background: #d3dce6;
-}
-.bg-purple-light {
-  background: #e5e9f2;
-}
-.grid-content {
-  border-radius: 4px;
-  min-height: 36px;
-}
-.row-bg {
-  padding: 10px 0;
-  background-color: #f9fafc;
+.editer-button {
+  margin-left: 140px;
+  width: 150px;
+  margin-top: 20px;
 }
 </style>

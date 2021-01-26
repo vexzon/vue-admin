@@ -92,8 +92,10 @@
       </el-table-column>
       <el-table-column align="center" label="操作" width="300px"
         ><template>
-          <el-button size="mini" type="success">编辑</el-button>
-          <el-button size="mini" type="danger">删除</el-button>
+          <el-button size="mini" type="primary">编辑</el-button>
+          <el-button size="mini" type="danger" @click="deleteItem"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -101,7 +103,7 @@
     <!-- 分页 -->
     <el-row class="paging">
       <el-col :span="14">
-        <el-button>批量删除</el-button>
+        <el-button @click="deleteAll">批量删除</el-button>
       </el-col>
       <el-col :span="10"
         ><el-pagination
@@ -122,15 +124,19 @@
   </div>
 </template>
 <script>
-import { reactive, ref } from "@vue/composition-api";
+import { reactive, ref, watch } from "@vue/composition-api";
 import InfoDialog from "./dialog/InfoDialog";
-
+import { global } from "../../utils/global";
 export default {
   name: "Info",
   components: {
     InfoDialog
   },
   setup() {
+    const { str, confirm } = global();
+    watch(() => {
+      console.log(str.value);
+    });
     // 数据
 
     const dialogInfo = ref(false);
@@ -191,6 +197,27 @@ export default {
       console.log(val);
     };
 
+    // 删除列表
+    const deleteItem = () => {
+      confirm({
+        content: "确认删除当前信息",
+        fn: confirmDelete,
+        id: "111"
+      });
+    };
+    // 批量删除
+    const deleteAll = () => {
+      confirm({
+        content: "确认删除选中信息",
+        fn: confirmDelete,
+        id: "222"
+      });
+    };
+
+    // 确认删除
+    const confirmDelete = () => {
+      console.log(1112324);
+    };
     return {
       // 基础数据
       dialogInfo,
@@ -206,7 +233,10 @@ export default {
 
       // 方法
       handleSizeChange,
-      handleCurrentChange
+      handleCurrentChange,
+      deleteItem,
+      deleteAll,
+      confirmDelete
     };
   }
 };
