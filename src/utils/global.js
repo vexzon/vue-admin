@@ -8,22 +8,23 @@ export function global() {
     MessageBox.confirm(params.content, "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
-      type: "warning",
+      type: params.type || "warning",
       center: true
     })
       .then(() => {
-        str.value = "删除";
-        params.fn && params.fn(params.id);
-        this.$message({
-          type: "success",
-          message: "删除成功!"
-        });
+        str.value = params.id || "";
+        params.fn && params.fn(params.id || "");
+        // this.$message({
+        //   type: "success",
+        //   message: "删除成功!"
+        // });
       })
       .catch(() => {
-        this.$message({
-          type: "info",
-          message: "已取消删除"
-        });
+        params.catchFn && params.catchFn();
+        // this.$message({
+        //   type: "info",
+        //   message: "已取消删除"
+        // });
       });
   };
 

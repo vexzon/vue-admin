@@ -24,6 +24,7 @@
             v-model="form.name"
             placeholder="请输入内容"
             style="height:150px"
+            :autosize="{ minRows: 2, maxRows: 4 }"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -37,7 +38,7 @@
   </div>
 </template>
 <script>
-import { reactive, ref, watch } from "@vue/composition-api";
+import { reactive, ref, watchEffect } from "@vue/composition-api";
 export default {
   name: "InfoDialog",
   props: {
@@ -62,7 +63,7 @@ export default {
     });
 
     // watch
-    watch(() => {
+    watchEffect(() => {
       dialogInfoFlag.value = props.flag;
     });
 

@@ -15,10 +15,7 @@ router.beforeEach((to, from, next) => {
     } else {
       next();
     }
-
-    console.log("存在");
   } else {
-    console.log("不存在");
     // 判断路由是否跳转
     whiteRouter.indexOf(to.path) !== -1 ? next() : next("/login");
   }

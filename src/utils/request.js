@@ -1,5 +1,7 @@
 import axios from "axios";
 import { Message } from "element-ui";
+
+import { getToKen, getUserName } from "./get-token";
 // 创建axios 赋给变量service
 const BASEURL = process.env.NODE_ENV === "production" ? "" : "/devapi";
 const service = axios.create({
@@ -11,6 +13,8 @@ const service = axios.create({
 // 请求接口前，做一些数据处理（请求拦截器）
 service.interceptors.request.use(
   function(config) {
+    config.headers["Tokey"] = getToKen();
+    config.headers["UserName"] = getUserName();
     return config;
   },
   function(error) {

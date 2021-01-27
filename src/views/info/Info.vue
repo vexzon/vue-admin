@@ -5,14 +5,14 @@
       <el-row :gutter="10">
         <el-col :xs="3" :sm="3" :md="3" :lg="3" :xl="3"
           ><div class="label-warp category">
-            <label for="">类型:</label>
+            <label for="">分类:</label>
             <div class="warp-content">
               <el-select v-model="categoryValue" placeholder="请选择">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="item in options.category"
+                  :key="item.id"
+                  :label="item.category_name"
+                  :value="item.id"
                 >
                 </el-option>
               </el-select>
@@ -124,19 +124,23 @@
   </div>
 </template>
 <script>
-import { reactive, ref, watch } from "@vue/composition-api";
+import { onMounted, reactive, ref, watch } from "@vue/composition-api";
 import InfoDialog from "./dialog/InfoDialog";
 import { global } from "../../utils/global";
+import { common } from "@/api/common";
+
 export default {
   name: "Info",
   components: {
     InfoDialog
   },
   setup() {
-    const { str, confirm } = global();
-    watch(() => {
-      console.log(str.value);
-    });
+    const { confirm } = global();
+    // 获取数据
+    const { getInfoCategory, categoryItem } = common();
+    // watch(() => {
+    //   console.log(str.value);
+    // });
     // 数据
 
     const dialogInfo = ref(false);
@@ -145,20 +149,7 @@ export default {
     const dateValue = ref("");
     const searchKeyWork = ref("");
 
-    const options = reactive([
-      {
-        value: 1,
-        label: "国际信息"
-      },
-      {
-        value: 2,
-        label: "国内信息"
-      },
-      {
-        value: 3,
-        label: "行业信息"
-      }
-    ]);
+    const options = reactive({ category: [] });
 
     // 搜索关键字
     const searchOptions = reactive([
@@ -218,6 +209,17 @@ export default {
     const confirmDelete = () => {
       console.log(1112324);
     };
+
+    // 监听获取分类对象
+    watch(
+      () => categoryItem.item,
+      value => {
+        options.category = value;
+      }
+    );
+    onMounted(() => {
+      getInfoCategory();
+    });
     return {
       // 基础数据
       dialogInfo,
