@@ -1,5 +1,6 @@
 import { GetCategory } from "@/api/news";
 
+//
 const actions = {
   getInfoCategory() {
     return new Promise((resolve, reject) => {

@@ -50,6 +50,7 @@ const actions = {
         });
     });
   },
+  // 退出
   exit({ commit }) {
     return new Promise((resolve, reject) => {
       removeToKen();

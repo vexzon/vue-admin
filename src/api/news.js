@@ -36,7 +36,7 @@ export function DeleteCategory(data) {
 export function EditCategory(data) {
   return service.request({
     method: "post",
-    url: "	/news/editCategory/",
+    url: "/news/editCategory/",
     data
   });
 }

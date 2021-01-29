@@ -11,6 +11,7 @@ export function common() {
     GetCategory({})
       .then(res => {
         let resData = res.data;
+        // 赋值
         categoryItem.item = resData.data.data;
       })
       .catch(err => {

@@ -3,6 +3,7 @@
     <!-- 表头 -->
     <el-form>
       <el-row :gutter="10">
+        <!-- 分类 -->
         <el-col :xs="3" :sm="3" :md="3" :lg="3" :xl="3"
           ><div class="label-warp category">
             <label for="">分类:</label>
@@ -18,6 +19,7 @@
               </el-select>
             </div></div
         ></el-col>
+        <!-- 日期 -->
         <el-col :xs="9" :sm="9" :md="9" :lg="9" :xl="9"
           ><div class="label-warp date">
             <label for="">日期: </label>
@@ -33,6 +35,7 @@
               </el-date-picker>
             </div></div
         ></el-col>
+        <!-- 关键字 -->
         <el-col :xs="8" :sm="8" :md="8" :lg="8" :xl="8"
           ><div class="label-warp key-work">
             <label for="">关键字:</label>
@@ -54,6 +57,7 @@
               </el-input>
             </div></div
         ></el-col>
+        <!-- 搜索 -->
         <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="2"
           ><div class=" ">
             <el-button type="danger">搜索</el-button>
