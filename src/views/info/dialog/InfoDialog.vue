@@ -7,11 +7,17 @@
       :visible.sync="dialogInfoFlag"
       @close="close"
       width="580px"
+      @opened="openDialog"
     >
       <el-form :model="form">
         <el-form-item label="类别" :label-width="formLabelWidth">
           <el-select v-model="form.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option
+              v-for="item in categoryOption.item"
+              :key="item.id"
+              :label="item.category_name"
+              :value="item.id"
+            ></el-option>
             <el-option label="区域二" value="beijing"></el-option>
           </el-select>
         </el-form-item>
@@ -45,6 +51,10 @@ export default {
     flag: {
       type: Boolean,
       default: false
+    },
+    category: {
+      type: Array,
+      default: () => []
     }
   },
   setup(props, { emit }) {
@@ -62,6 +72,9 @@ export default {
       desc: ""
     });
 
+    const categoryOption = reactive({
+      item: []
+    });
     // watch
     watchEffect(() => {
       dialogInfoFlag.value = props.flag;
@@ -72,11 +85,19 @@ export default {
       dialogInfoFlag.value = false;
       emit("update:flag", false);
     };
+
+    // 打开新增菜单的时候传入数据
+    const openDialog = () => {
+      categoryOption.item = props.category;
+    };
     return {
       dialogInfoFlag,
       formLabelWidth,
       form,
-      close
+      categoryOption,
+
+      close,
+      openDialog
     };
   }
 };

@@ -124,7 +124,10 @@
     </el-row>
 
     <!-- 弹窗 -->
-    <info-dialog :flag.sync="dialogInfo"></info-dialog>
+    <info-dialog
+      :flag.sync="dialogInfo"
+      :category="options.category"
+    ></info-dialog>
   </div>
 </template>
 <script>
@@ -142,9 +145,7 @@ export default {
     const { confirm } = global();
     // 获取数据
     const { getInfoCategory, categoryItem } = common();
-    // watch(() => {
-    //   console.log(str.value);
-    // });
+
     // 数据
 
     const dialogInfo = ref(false);
