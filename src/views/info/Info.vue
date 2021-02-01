@@ -176,12 +176,6 @@ export default {
         category: "新闻",
         date: "2021-01-21",
         user: "王小虎"
-      },
-      {
-        title: "1111",
-        category: "新闻",
-        date: "2021-01-21",
-        user: "王小虎"
       }
     ]);
 
