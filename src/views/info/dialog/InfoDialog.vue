@@ -11,7 +11,7 @@
     >
       <el-form :model="form">
         <el-form-item label="类别" :label-width="formLabelWidth">
-          <el-select v-model="form.region" placeholder="请选择活动区域">
+          <el-select v-model="form.category" placeholder="请选择活动区域">
             <el-option
               v-for="item in categoryOption.item"
               :key="item.id"
@@ -36,15 +36,14 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="close">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="submit">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
 import { reactive, ref, watchEffect } from "@vue/composition-api";
+import { AddInfo } from "@/api/news";
 export default {
   name: "InfoDialog",
   props: {
@@ -62,14 +61,12 @@ export default {
     const dialogInfoFlag = ref(true);
     const formLabelWidth = ref("50px");
     const form = reactive({
-      name: "",
-      region: "",
-      date1: "",
-      date2: "",
-      delivery: false,
-      type: [],
-      resource: "",
-      desc: ""
+      categoryId: "",
+      title: "",
+      imgUrl: "",
+      createDate: "",
+      status: "",
+      content: ""
     });
 
     const categoryOption = reactive({
@@ -89,6 +86,19 @@ export default {
     // 打开新增菜单的时候传入数据
     const openDialog = () => {
       categoryOption.item = props.category;
+      console.log(props.category);
+    };
+    const submit = () => {
+      let requsetData = {
+        categoryId: form.region,
+        title: "form.region",
+        imgUrl: " 标题（string）",
+        createDate: "日期（string）",
+        status: "是否发布（string）（1：否，2：是）",
+        content: "内容"
+      };
+      console.log(requsetData);
+      AddInfo(requsetData);
     };
     return {
       dialogInfoFlag,
@@ -97,7 +107,8 @@ export default {
       categoryOption,
 
       close,
-      openDialog
+      openDialog,
+      submit
     };
   }
 };

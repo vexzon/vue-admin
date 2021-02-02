@@ -40,3 +40,12 @@ export function EditCategory(data) {
     data
   });
 }
+
+// 添加信息
+export function AddInfo(data) {
+  return service.request({
+    method: "post",
+    url: "/news/add/",
+    data
+  });
+}

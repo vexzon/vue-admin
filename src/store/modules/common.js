@@ -6,7 +6,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       GetCategory({})
         .then(res => {
-          resolve(res);
+          resolve(res.data.data.data);
         })
         .catch(error => {
           reject(error);

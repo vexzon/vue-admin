@@ -131,20 +131,20 @@
   </div>
 </template>
 <script>
-import { onMounted, reactive, ref, watch } from "@vue/composition-api";
+import { onMounted, reactive, ref } from "@vue/composition-api";
 import InfoDialog from "./dialog/InfoDialog";
-import { global } from "../../utils/global";
-import { common } from "@/api/common";
+import { global } from "@/utils/global";
+// import { common } from "@/api/common";
 
 export default {
   name: "Info",
   components: {
     InfoDialog
   },
-  setup() {
+  setup(props, { root }) {
     const { confirm } = global();
     // 获取数据
-    const { getInfoCategory, categoryItem } = common();
+    // const { getInfoCategory, categoryItem } = common();
 
     // 数据
 
@@ -209,16 +209,31 @@ export default {
       console.log(1112324);
     };
 
-    // 监听获取分类对象
-    watch(
-      () => categoryItem.item,
-      value => {
-        options.category = value;
-      }
-    );
+    //
+    const getInfoCategory = () => {
+      root.$store
+        .dispatch("common/getInfoCategory")
+        .then(res => {
+          options.category = res;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    };
     onMounted(() => {
+      // vue3.0
       getInfoCategory();
+
+      //vuex
     });
+
+    // 监听获取分类对象
+    // watch(
+    //   () => categoryItem.item,
+    //   value => {
+    //     options.category = value;
+    //   }
+    // );
     return {
       // 基础数据
       dialogInfo,
