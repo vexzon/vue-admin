@@ -4,45 +4,63 @@
 
     <el-dialog
       title="新增"
-      :visible.sync="dialogInfoFlag"
+      :visible.sync="dataSet.dialogInfoFlag"
       @close="close"
       width="580px"
       @opened="openDialog"
     >
-      <el-form :model="form">
-        <el-form-item label="类别" :label-width="formLabelWidth">
-          <el-select v-model="form.category" placeholder="请选择活动区域">
+      <el-form :model="dataSet.form" ref="addInfoForm">
+        <el-form-item label="类别" :label-width="dataSet.formLabelWidth">
+          <el-select
+            v-model="dataSet.form.categoryId"
+            placeholder="请选择活动区域"
+          >
             <el-option
-              v-for="item in categoryOption.item"
+              v-for="item in dataSet.categoryOption"
               :key="item.id"
               :label="item.category_name"
               :value="item.id"
             ></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="标题" :label-width="formLabelWidth">
-          <el-input v-model="form.name" placeholder="请输入内容"></el-input>
+
+        <el-form-item
+          label="标题"
+          :label-width="dataSet.formLabelWidth"
+          prop="title"
+        >
+          <el-input
+            v-model="dataSet.form.title"
+            placeholder="请输入内容"
+          ></el-input>
         </el-form-item>
-        <el-form-item label="概况" :label-width="formLabelWidth">
+        <el-form-item
+          label="概况"
+          :label-width="dataSet.formLabelWidth"
+          prop="content"
+        >
           <el-input
             type="textarea"
-            v-model="form.name"
+            v-model="dataSet.form.content"
             placeholder="请输入内容"
-            style="height:150px"
             :autosize="{ minRows: 2, maxRows: 4 }"
           ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="close">取 消</el-button>
-        <el-button type="primary" @click="submit">确 定</el-button>
+        <el-button
+          type="primary"
+          :loading="dataSet.submitLoading"
+          @click="submit"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
-import { reactive, ref, watchEffect } from "@vue/composition-api";
+import { reactive, watchEffect } from "@vue/composition-api";
 import { AddInfo } from "@/api/news";
 export default {
   name: "InfoDialog",
@@ -56,55 +74,73 @@ export default {
       default: () => []
     }
   },
-  setup(props, { emit }) {
+  setup(props, { emit, root, refs }) {
     // 数据
-    const dialogInfoFlag = ref(true);
-    const formLabelWidth = ref("50px");
-    const form = reactive({
-      categoryId: "",
-      title: "",
-      imgUrl: "",
-      createDate: "",
-      status: "",
-      content: ""
+    const dataSet = reactive({
+      dialogInfoFlag: true, //弹窗标记
+      formLabelWidth: "50px",
+      submitLoading: false, // 按钮加载状态，避免连点
+      // form表单
+      form: {
+        categoryId: "",
+        title: "",
+        imgUrl: "",
+        createDate: "",
+        status: "",
+        content: ""
+      },
+      categoryOption: [] // 分类下拉数据
     });
 
-    const categoryOption = reactive({
-      item: []
-    });
     // watch
     watchEffect(() => {
-      dialogInfoFlag.value = props.flag;
+      dataSet.dialogInfoFlag = props.flag;
     });
 
     // 方法
     const close = () => {
-      dialogInfoFlag.value = false;
+      dataSet.dialogInfoFlag = false;
       emit("update:flag", false);
     };
 
     // 打开新增菜单的时候传入数据
     const openDialog = () => {
-      categoryOption.item = props.category;
-      console.log(props.category);
+      dataSet.categoryOption = props.category;
     };
     const submit = () => {
       let requsetData = {
-        categoryId: form.region,
-        title: "form.region",
-        imgUrl: " 标题（string）",
-        createDate: "日期（string）",
-        status: "是否发布（string）（1：否，2：是）",
-        content: "内容"
+        categoryId: dataSet.form.categoryId,
+        title: dataSet.form.title,
+        content: dataSet.form.content
       };
-      console.log(requsetData);
-      AddInfo(requsetData);
+      // 在本地判断是否选了类型
+      if (!dataSet.form.categoryId) {
+        root.$message({
+          message: "分类不能为空",
+          type: "warning"
+        });
+        return false;
+      }
+      dataSet.submitLoading = true;
+      AddInfo(requsetData)
+        .then(res => {
+          let resData = res.data;
+          console.log(resData);
+          root.$message({
+            message: resData.message,
+            type: "success"
+          });
+          dataSet.submitLoading = false;
+          // 重置表单
+          refs.addInfoForm.resetFields();
+        })
+        .catch(err => {
+          console.log(err);
+          dataSet.submitLoading = false;
+        });
     };
     return {
-      dialogInfoFlag,
-      formLabelWidth,
-      form,
-      categoryOption,
+      dataSet,
 
       close,
       openDialog,

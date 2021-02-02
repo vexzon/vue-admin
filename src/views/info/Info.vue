@@ -73,7 +73,12 @@
     </el-form>
 
     <!-- 表格 -->
-    <el-table :data="tableData" border class="table-content">
+    <el-table
+      :data="tableData.item"
+      border
+      class="table-content"
+      v-loading="dataSet.loadingData"
+    >
       <el-table-column type="selection" align="center" width="45">
       </el-table-column>
       <el-table-column
@@ -85,19 +90,26 @@
       </el-table-column>
       <el-table-column
         align="center"
-        prop="category"
+        prop="categoryId"
         label="类别"
         width="135px"
+        :formatter="toCategory"
       >
       </el-table-column>
-      <el-table-column align="center" prop="date" label="日期" width="237">
+      <el-table-column
+        align="center"
+        prop="createDate"
+        label="日期"
+        width="237"
+        :formatter="toDate"
+      >
       </el-table-column>
-      <el-table-column align="center" prop="user" label="管理员" width="115">
-      </el-table-column>
+      <!-- <el-table-column align="center" prop="user" label="管理员" width="115">
+      </el-table-column> -->
       <el-table-column align="center" label="操作" width="300px"
-        ><template>
+        ><template slot-scope="scope">
           <el-button size="mini" type="primary">编辑</el-button>
-          <el-button size="mini" type="danger" @click="deleteItem"
+          <el-button size="mini" type="danger" @click="deleteItem(scope.row.id)"
             >删除</el-button
           >
         </template>
@@ -115,9 +127,8 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :page-sizes="[10, 20, 50, 100]"
-          layout="total,sizes, prev, pager, next,jumper"
-          :total="1000"
-          class="page-display"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="dataSet.total"
         >
         </el-pagination
       ></el-col>
@@ -134,6 +145,8 @@
 import { onMounted, reactive, ref } from "@vue/composition-api";
 import InfoDialog from "./dialog/InfoDialog";
 import { global } from "@/utils/global";
+import { GetList, DeleteInfo } from "@/api/news";
+import { timestampToTime } from "@/utils/common";
 // import { common } from "@/api/common";
 
 export default {
@@ -147,13 +160,17 @@ export default {
     // const { getInfoCategory, categoryItem } = common();
 
     // 数据
+    const dataSet = reactive({
+      loadingData: false, //加载状态
+      total: 0, //总页数
+      deleteInfoId: ""
+    });
 
     const dialogInfo = ref(false);
     const searchKey = ref("id");
     const categoryValue = ref("");
     const dateValue = ref("");
     const searchKeyWork = ref("");
-
     const options = reactive({ category: [] });
 
     // 搜索关键字
@@ -164,38 +181,72 @@ export default {
         label: "标题"
       }
     ]);
-    const tableData = reactive([
-      {
-        title: "1111",
-        category: "新闻",
-        date: "2021-01-21",
-        user: "王小虎"
-      },
-      {
-        title: "1111",
-        category: "新闻",
-        date: "2021-01-21",
-        user: "王小虎"
-      }
-    ]);
+
+    // 页码
+    const page = reactive({
+      pageNumber: 1,
+      pageSize: 10
+    });
+
+    const tableData = reactive({
+      item: []
+    });
 
     // 方法
     const handleSizeChange = val => {
-      console.log(val);
+      page.pageSize = val;
+      console.log(1111);
     };
     const handleCurrentChange = val => {
-      console.log(val);
+      page.pageNumber = val;
+      console.log(22222);
+      getList();
     };
 
-    // 删除列表
-    const deleteItem = () => {
+    // 获取列表数据
+    const getList = () => {
+      let requsetData = {
+        categoryId: "",
+        startTiem: "",
+        endTime: "",
+        title: "",
+        id: "",
+        pageNumber: page.pageNumber,
+        pageSize: page.pageSize
+      };
+      dataSet.loadingData = true;
+      GetList(requsetData)
+        .then(res => {
+          let resData = res.data.data;
+          // 更新数据
+          tableData.item = resData.data;
+          // 页码数量
+          dataSet.total = resData.total;
+          // 加载状态
+          dataSet.loadingData = false;
+          dataSet.c;
+        })
+        .catch(err => {
+          console.log(err);
+          dataSet.loadingData = false;
+        });
+    };
+
+    /*
+删除数据
+*/
+
+    // 删除列表提示信息
+    const deleteItem = id => {
+      dataSet.deleteInfoId = [id];
+
       confirm({
         content: "确认删除当前信息",
         fn: confirmDelete,
         id: "111"
       });
     };
-    // 批量删除
+    // 批量删除提示信息
     const deleteAll = () => {
       confirm({
         content: "确认删除选中信息",
@@ -206,7 +257,13 @@ export default {
 
     // 确认删除
     const confirmDelete = () => {
-      console.log(1112324);
+      DeleteInfo({ id: dataSet.deleteInfoId })
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     };
 
     //
@@ -221,12 +278,24 @@ export default {
         });
     };
     onMounted(() => {
-      // vue3.0
+      // 获取分类
       getInfoCategory();
-
-      //vuex
+      // 获取列表
+      getList();
     });
 
+    // 转换日期格式
+    const toDate = row => {
+      return timestampToTime(row.createDate);
+    };
+
+    //转换类型
+    const toCategory = row => {
+      let categoryName = options.category.filter(
+        item => item.id == row.categoryId
+      )[0].category_name;
+      return categoryName;
+    };
     // 监听获取分类对象
     // watch(
     //   () => categoryItem.item,
@@ -236,6 +305,7 @@ export default {
     // );
     return {
       // 基础数据
+      dataSet,
       dialogInfo,
       searchKeyWork,
       tableData,
@@ -246,13 +316,17 @@ export default {
       // 对象数据
       options,
       searchOptions,
+      page,
 
       // 方法
       handleSizeChange,
       handleCurrentChange,
+      getList,
       deleteItem,
       deleteAll,
-      confirmDelete
+      confirmDelete,
+      toDate,
+      toCategory
     };
   }
 };
