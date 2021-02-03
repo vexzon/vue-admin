@@ -26,21 +26,29 @@
             <div class="warp-content">
               <el-date-picker
                 v-model="dateValue"
-                type="datetimerange"
+                type="daterange"
                 align="right"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 :default-time="['12:00:00', '08:00:00']"
+                format="yyyy 年 MM 月 dd 日   HH 时 mm 分 ss 秒"
+                value-format="yyyy-MM-dd  HH:mm:ss"
               >
+                > > >
               </el-date-picker>
-            </div></div
-        ></el-col>
+            </div>
+          </div></el-col
+        >
         <!-- 关键字 -->
         <el-col :xs="8" :sm="8" :md="8" :lg="8" :xl="8"
           ><div class="label-warp key-work">
             <label for="">关键字:</label>
             <div class="warp-content">
-              <el-input placeholder="请输入内容" class="input-with-select">
+              <el-input
+                v-model="searchKeyWork"
+                placeholder="请输入内容"
+                class="input-with-select"
+              >
                 <el-select
                   class="select-keyword"
                   v-model="searchKey"
@@ -60,7 +68,7 @@
         <!-- 搜索 -->
         <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="2"
           ><div class=" ">
-            <el-button type="danger">搜索</el-button>
+            <el-button type="danger" @click="search">搜索</el-button>
           </div></el-col
         >
         <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="2"
@@ -78,6 +86,7 @@
       border
       class="table-content"
       v-loading="dataSet.loadingData"
+      @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" align="center" width="45">
       </el-table-column>
@@ -108,7 +117,9 @@
       </el-table-column> -->
       <el-table-column align="center" label="操作" width="300px"
         ><template slot-scope="scope">
-          <el-button size="mini" type="primary">编辑</el-button>
+          <el-button size="mini" type="primary" @click="editInfo(scope.row.id)"
+            >编辑</el-button
+          >
           <el-button size="mini" type="danger" @click="deleteItem(scope.row.id)"
             >删除</el-button
           >
@@ -119,7 +130,7 @@
     <!-- 分页 -->
     <el-row class="paging">
       <el-col :span="14">
-        <el-button @click="deleteAll">批量删除</el-button>
+        <el-button @click="deleteAll" type="danger">批量删除</el-button>
       </el-col>
       <el-col :span="10"
         ><el-pagination
@@ -134,16 +145,23 @@
       ></el-col>
     </el-row>
 
-    <!-- 弹窗 -->
+    <!-- 新增弹窗 -->
     <info-dialog
       :flag.sync="dialogInfo"
       :category="options.category"
     ></info-dialog>
+    <!-- 编辑弹窗 -->
+    <edit-dialog
+      :flag.sync="dialogInfoEdit"
+      :category="options.category"
+      :id="dataSet.infoId"
+    ></edit-dialog>
   </div>
 </template>
 <script>
 import { onMounted, reactive, ref } from "@vue/composition-api";
-import InfoDialog from "./dialog/InfoDialog";
+import InfoDialog from "./dialog/AddDialog";
+import EditDialog from "./dialog/EditDialog";
 import { global } from "@/utils/global";
 import { GetList, DeleteInfo } from "@/api/news";
 import { timestampToTime } from "@/utils/common";
@@ -152,7 +170,8 @@ import { timestampToTime } from "@/utils/common";
 export default {
   name: "Info",
   components: {
-    InfoDialog
+    InfoDialog,
+    EditDialog
   },
   setup(props, { root }) {
     const { confirm } = global();
@@ -163,23 +182,26 @@ export default {
     const dataSet = reactive({
       loadingData: false, //加载状态
       total: 0, //总页数
-      deleteInfoId: ""
+      deleteInfoId: "",
+      infoId: ""
     });
 
     const dialogInfo = ref(false);
-    const searchKey = ref("id");
+    const dialogInfoEdit = ref(false);
+    const searchKey = ref("title");
     const categoryValue = ref("");
     const dateValue = ref("");
     const searchKeyWork = ref("");
+
     const options = reactive({ category: [] });
 
     // 搜索关键字
     const searchOptions = reactive([
-      { value: "id", label: "ID" },
       {
         value: "title",
         label: "标题"
-      }
+      },
+      { value: "id", label: "ID" }
     ]);
 
     // 页码
@@ -203,18 +225,45 @@ export default {
       getList();
     };
 
-    // 获取列表数据
-    const getList = () => {
+    // 搜索
+    const search = () => {
+      let requsetData = formatDta();
+      console.log(requsetData);
+      getList();
+    };
+
+    // 判断属性是否存在
+    const formatDta = () => {
       let requsetData = {
-        categoryId: "",
-        startTiem: "",
-        endTime: "",
-        title: "",
-        id: "",
         pageNumber: page.pageNumber,
         pageSize: page.pageSize
       };
-      dataSet.loadingData = true;
+      // 分类ID
+      if (categoryValue.value) {
+        requsetData.categoryId = categoryValue.value;
+      }
+      // 日期
+      if (dateValue.value.length > 0) {
+        requsetData.startTiem = dateValue.value[0];
+        requsetData.endTime = dateValue.value[1];
+      }
+      // 关键字
+      requsetData[searchKey.value] = searchKeyWork.value;
+      return requsetData;
+    };
+
+    // 编辑数据
+    const editInfo = id => {
+      dataSet.infoId = id;
+      dialogInfoEdit.value = true;
+    };
+
+    // 获取列表数据
+    const getList = () => {
+      // 单独处理数据
+
+      let requsetData = formatDta();
+      dataSet.loadingData = true; //加载状态
       GetList(requsetData)
         .then(res => {
           let resData = res.data.data;
@@ -242,16 +291,21 @@ export default {
 
       confirm({
         content: "确认删除当前信息",
-        fn: confirmDelete,
-        id: "111"
+        fn: confirmDelete
       });
     };
     // 批量删除提示信息
     const deleteAll = () => {
+      if (!dataSet.deleteInfoId || dataSet.deleteInfoId.length == 0) {
+        root.$message({
+          message: "请选择要删除的数据",
+          type: "warning"
+        });
+        return false;
+      }
       confirm({
         content: "确认删除选中信息",
-        fn: confirmDelete,
-        id: "222"
+        fn: confirmDelete
       });
     };
 
@@ -259,6 +313,8 @@ export default {
     const confirmDelete = () => {
       DeleteInfo({ id: dataSet.deleteInfoId })
         .then(res => {
+          dataSet.deleteInfoId = "";
+          getList();
           console.log(res);
         })
         .catch(err => {
@@ -277,6 +333,14 @@ export default {
           console.log(err);
         });
     };
+
+    // 删除全部选中的
+    const handleSelectionChange = val => {
+      let dataId = val.map(item => item.id);
+      dataSet.deleteInfoId = dataId;
+    };
+
+    // 生命周期
     onMounted(() => {
       // 获取分类
       getInfoCategory();
@@ -307,6 +371,7 @@ export default {
       // 基础数据
       dataSet,
       dialogInfo,
+      dialogInfoEdit,
       searchKeyWork,
       tableData,
       searchKey,
@@ -321,12 +386,17 @@ export default {
       // 方法
       handleSizeChange,
       handleCurrentChange,
+      search,
+      formatDta,
       getList,
       deleteItem,
       deleteAll,
       confirmDelete,
       toDate,
-      toCategory
+      toCategory,
+      handleSelectionChange,
+
+      editInfo //编辑
     };
   }
 };
@@ -362,7 +432,7 @@ export default {
 
 // 表格内容
 .select-keyword {
-  width: 70px;
+  width: 80px;
 }
 
 .table-content {

@@ -62,6 +62,7 @@
 <script>
 import { reactive, watchEffect } from "@vue/composition-api";
 import { AddInfo } from "@/api/news";
+
 export default {
   name: "InfoDialog",
   props: {
