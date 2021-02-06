@@ -126,7 +126,6 @@ export default {
       AddInfo(requsetData)
         .then(res => {
           let resData = res.data;
-          console.log(resData);
           root.$message({
             message: resData.message,
             type: "success"
@@ -134,6 +133,9 @@ export default {
           dataSet.submitLoading = false;
           // 重置表单
           refs.addInfoForm.resetFields();
+          // 刷新列表
+          emit("addGetListEmit");
+          close();
         })
         .catch(err => {
           console.log(err);

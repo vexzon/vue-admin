@@ -29,7 +29,18 @@
                   "
                   >编辑</el-button
                 >
-                <el-button size="mini" round type="primary">添加子集</el-button>
+                <el-button
+                  size="mini"
+                  round
+                  type="primary"
+                  @click="
+                    handlerAddChildren({
+                      categoryName: firstItem,
+                      type: 'categoryChildrenEdit'
+                    })
+                  "
+                  >添加子集</el-button
+                >
                 <el-button
                   size="mini"
                   round
@@ -45,7 +56,13 @@
                 {{ childItem.category_name }}
                 <div class="button-group">
                   <el-button size="mini" round type="success">编辑</el-button>
-                  <el-button size="mini" round type="danger">删除</el-button>
+                  <el-button
+                    size="mini"
+                    round
+                    type="danger"
+                    @click="deleteChildrenCategoryConfirm"
+                    >删除</el-button
+                  >
                 </div>
               </li>
             </ul>
@@ -90,7 +107,12 @@
 </template>
 <script>
 import { onMounted, reactive, ref, watch } from "@vue/composition-api";
-import { AddFirstCategory, DeleteCategory, EditCategory } from "@/api/news";
+import {
+  AddFirstCategory,
+  DeleteCategory,
+  EditCategory,
+  AddChildrenCategory
+} from "@/api/news";
 import { global } from "@/utils/global";
 import { common } from "@/api/common";
 export default {
@@ -99,7 +121,7 @@ export default {
     // global
     const { confirm } = global();
     // 获取接口数据
-    const { getInfoCategory, categoryItem } = common();
+    const { getInfoCategoryAll, categoryItem } = common();
     /*
     基础类型
      */
@@ -136,6 +158,9 @@ export default {
       }
       if (submitButtonType.value == "categoryFirstEdit") {
         editFirstCategory();
+      }
+      if (submitButtonType.value == "categoryChildrenEdit") {
+        addChildrenCategory();
       }
     };
 
@@ -176,11 +201,58 @@ export default {
       categoryChildren.value = false;
       firstDisabled.value = false;
       submitDisabled.value = false;
+      form.categoryName = "";
     };
 
+    //添加子集
+
+    const handlerAddChildren = params => {
+      // 存储数据
+      category.current = params.categoryName.id;
+      // 更新显示一级分类文本
+      form.categoryName = params.categoryName.category_name;
+      // 更新确定按钮类型
+      submitButtonType.value = params.type;
+      // 启用子集输入框
+      secondDisabled.value = false;
+      // 启用按钮
+      submitDisabled.value = false;
+      // 显示二级分类输入框
+      categoryChildren.value = true;
+      // 禁用一级输入框
+      firstDisabled.value = true;
+      // 隐藏一级输入框W
+    };
+
+    //
+    const addChildrenCategory = () => {
+      if (!form.seccategoryName) {
+        root.$message({
+          message: "子集不能为空",
+          type: "wraning"
+        });
+        return false;
+      }
+      let requsetDate = {
+        categoryName: form.seccategoryName,
+        parentId: category.current
+      };
+      AddChildrenCategory(requsetDate)
+        .then(res => {
+          let resData = res.data;
+          root.$message({
+            message: resData.message,
+            type: "success"
+          });
+          form.seccategoryName = "";
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    };
     // 删除一级分类
-    const deleteFirstCategoryConfirm = categoryID => {
-      deleteId.value = categoryID;
+    const deleteFirstCategoryConfirm = categoryId => {
+      deleteId.value = categoryId;
       confirm({
         content: "确认删除当前信息",
         fn: deleteCategory,
@@ -257,7 +329,7 @@ export default {
     );
     // 生命周期,挂载完成执行
     onMounted(() => {
-      getInfoCategory();
+      getInfoCategoryAll();
     });
 
     return {
@@ -278,9 +350,11 @@ export default {
       categorySubmit,
       addFirstCatgory,
       addFirst,
+      handlerAddChildren,
       deleteFirstCategoryConfirm,
       deleteCategory,
-      editCategory
+      editCategory,
+      addChildrenCategory
     };
   }
 };

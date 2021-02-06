@@ -61,7 +61,7 @@
 </template>
 <script>
 import { reactive, watchEffect } from "@vue/composition-api";
-import { AddInfo, GetList } from "@/api/news";
+import { GetList, EditInfo } from "@/api/news";
 
 export default {
   name: "InfoDialog",
@@ -79,7 +79,7 @@ export default {
       default: ""
     }
   },
-  setup(props, { emit, root, refs }) {
+  setup(props, { emit, root }) {
     // 数据
     const dataSet = reactive({
       dialogInfoFlag: true, //弹窗标记
@@ -132,6 +132,7 @@ export default {
     };
     const submit = () => {
       let requsetData = {
+        id: props.id,
         categoryId: dataSet.form.categoryId,
         title: dataSet.form.title,
         content: dataSet.form.content
@@ -145,7 +146,7 @@ export default {
         return false;
       }
       dataSet.submitLoading = true;
-      AddInfo(requsetData)
+      EditInfo(requsetData)
         .then(res => {
           let resData = res.data;
           console.log(resData);
@@ -154,8 +155,11 @@ export default {
             type: "success"
           });
           dataSet.submitLoading = false;
+          // 刷新数据接口
+          emit("editGetListEmit");
           // 重置表单
-          refs.addInfoForm.resetFields();
+          // refs.addInfoForm.resetFields();
+          close();
         })
         .catch(err => {
           console.log(err);

@@ -149,12 +149,14 @@
     <info-dialog
       :flag.sync="dialogInfo"
       :category="options.category"
+      @addGetListEmit="getList"
     ></info-dialog>
     <!-- 编辑弹窗 -->
     <edit-dialog
       :flag.sync="dialogInfoEdit"
       :category="options.category"
       :id="dataSet.infoId"
+      @editGetListEmit="getList"
     ></edit-dialog>
   </div>
 </template>
@@ -210,6 +212,7 @@ export default {
       pageSize: 10
     });
 
+    // 表格数据
     const tableData = reactive({
       item: []
     });
@@ -217,18 +220,17 @@ export default {
     // 方法
     const handleSizeChange = val => {
       page.pageSize = val;
-      console.log(1111);
     };
     const handleCurrentChange = val => {
       page.pageNumber = val;
-      console.log(22222);
+
       getList();
     };
 
     // 搜索
     const search = () => {
-      let requsetData = formatDta();
-      console.log(requsetData);
+      // let requsetData = formatDta();
+      // console.log(requsetData);
       getList();
     };
 
@@ -273,7 +275,6 @@ export default {
           dataSet.total = resData.total;
           // 加载状态
           dataSet.loadingData = false;
-          dataSet.c;
         })
         .catch(err => {
           console.log(err);
