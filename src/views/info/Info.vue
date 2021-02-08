@@ -41,8 +41,10 @@
         <el-col :xs="8" :sm="8" :md="8" :lg="8" :xl="8"
           ><div class="label-warp key-work">
             <label for="">关键字:</label>
+
             <div class="warp-content">
-              <el-input
+              <search-select :config="dataSet.configOption"></search-select>
+              <!-- <el-input
                 v-model="searchKeyWork"
                 placeholder="请输入内容"
                 class="input-with-select"
@@ -60,9 +62,10 @@
                   >
                   </el-option>
                 </el-select>
-              </el-input>
-            </div></div
-        ></el-col>
+              </el-input> -->
+            </div>
+          </div></el-col
+        >
         <!-- 搜索 -->
         <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="2"
           ><div class=" ">
@@ -179,13 +182,14 @@ import EditDialog from "./dialog/EditDialog";
 import { global } from "@/utils/global";
 import { GetList, DeleteInfo } from "@/api/news";
 import { timestampToTime } from "@/utils/common";
-// import { common } from "@/api/common";
+import SearchSelect from "@/components/select/SearchSelect";
 
 export default {
   name: "Info",
   components: {
     InfoDialog,
-    EditDialog
+    EditDialog,
+    SearchSelect
   },
   setup(props, { root }) {
     const { confirm } = global();
@@ -197,7 +201,10 @@ export default {
       loadingData: false, //加载状态
       total: 0, //总页数
       deleteInfoId: "",
-      infoId: ""
+      infoId: "",
+      configOption: {
+        init: ["title", "id"]
+      }
     });
 
     const dialogInfo = ref(false);
@@ -468,11 +475,10 @@ export default {
 .el-col-keywork {
   padding-right: 0px !important;
 }
-
-// 表格内容
-.select-keyword {
+.el-select.select-category {
   width: 80px;
 }
+// 表格内容
 
 .table-content {
   margin-top: 20px;
