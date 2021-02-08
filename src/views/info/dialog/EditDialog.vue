@@ -122,7 +122,6 @@ export default {
       };
       GetList(requsetData).then(res => {
         let resData = res.data.data.data[0];
-        console.log(resData);
         dataSet.form = {
           categoryId: resData.categoryId,
           title: resData.title,

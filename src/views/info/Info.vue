@@ -34,11 +34,9 @@
                 format="yyyy 年 MM 月 dd 日   HH 时 mm 分 ss 秒"
                 value-format="yyyy-MM-dd  HH:mm:ss"
               >
-                > > >
               </el-date-picker>
-            </div>
-          </div></el-col
-        >
+            </div></div
+        ></el-col>
         <!-- 关键字 -->
         <el-col :xs="8" :sm="8" :md="8" :lg="8" :xl="8"
           ><div class="label-warp key-work">
@@ -120,9 +118,23 @@
           <el-button size="mini" type="primary" @click="editInfo(scope.row.id)"
             >编辑</el-button
           >
-          <el-button size="mini" type="danger" @click="deleteItem(scope.row.id)"
+          <el-button
+            size="mini"
+            type="danger"
+            @click="deleteItem(scope.row.id)"
+            style="margin-right:10px"
             >删除</el-button
           >
+          <el-button size="mini" type="primary" @click="detailed(scope.row)"
+            >编辑详情</el-button
+          >
+          <!-- <router-link
+            :to="{
+              name: 'InfoDetailed',
+              query: { id: scope.row.id, title: scope.row.title }
+            }"
+            ><el-button size="mini" type="primary">编辑详情</el-button>
+          </router-link> -->
         </template>
       </el-table-column>
     </el-table>
@@ -282,6 +294,31 @@ export default {
         });
     };
 
+    //
+    const detailed = data => {
+      root.$store.commit("infoDetailed/updateStateValue", {
+        id: {
+          value: data.id,
+          session: true,
+          sessionKey: "infoID"
+        },
+        title: {
+          value: data.title,
+          session: true,
+          sessionKey: "infoTitle"
+        }
+      });
+      root.$router.push({
+        // 跳转页面
+        // path: `/infoDetailed/${data.id}/${data.title}`
+        name: "InfoDetailed",
+        params: {
+          id: data.id,
+          title: data.title
+        }
+      });
+    };
+
     /*
 删除数据
 */
@@ -323,7 +360,7 @@ export default {
         });
     };
 
-    //
+    //获取分类
     const getInfoCategory = () => {
       root.$store
         .dispatch("common/getInfoCategory")
@@ -387,6 +424,7 @@ export default {
       // 方法
       handleSizeChange,
       handleCurrentChange,
+      detailed,
       search,
       formatDta,
       getList,

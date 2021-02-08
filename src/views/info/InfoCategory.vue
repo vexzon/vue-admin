@@ -56,13 +56,7 @@
                 {{ childItem.category_name }}
                 <div class="button-group">
                   <el-button size="mini" round type="success">编辑</el-button>
-                  <el-button
-                    size="mini"
-                    round
-                    type="danger"
-                    @click="deleteChildrenCategoryConfirm"
-                    >删除</el-button
-                  >
+                  <el-button size="mini" round type="danger">删除</el-button>
                 </div>
               </li>
             </ul>
