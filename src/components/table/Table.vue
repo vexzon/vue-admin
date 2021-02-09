@@ -1,9 +1,9 @@
 <template>
-  <div></div>
+  <div>GGGG</div>
 </template>
 <script>
 export default {
-  name: ""
+  name: "Table"
 };
 </script>
-<style scoped></style>
+<style lang="scss" scoped></style>
