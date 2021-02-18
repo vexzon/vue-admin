@@ -1,5 +1,5 @@
 <template>
-  <div>GGGG十点半</div>
+  <div>十点5分</div>
 </template>
 <script>
 export default {
