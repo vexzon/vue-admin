@@ -31,7 +31,7 @@ export default {
       configOption: { init: ["name", "phone", "email"] },
       // table组件配置
       configTable: {
-        //多选框
+        // 多选框
         selection: false,
         // 翻页记录
         recordCheckbox: true,
