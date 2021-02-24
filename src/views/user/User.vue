@@ -29,7 +29,7 @@ export default {
   setup() {
     const dataSet = reactive({
       configOption: { init: ["name", "phone", "email"] },
-      // table组件配置
+      // table 组件配置
       configTable: {
         // 多选框
         selection: false,
