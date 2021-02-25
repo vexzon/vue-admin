@@ -11,7 +11,9 @@
       </el-col>
     </el-row>
     <div class="table-data">
-      <table-data :config="dataSet.configTable"></table-data>
+      <table-data :config="dataSet.configTable">
+        <template>adasfa </template>
+      </table-data>
     </div>
   </div>
 </template>
@@ -41,7 +43,13 @@ export default {
           { label: "真实姓名", field: "name", width: "120" },
           { label: "手机号", field: "phone", width: "150" },
           { label: "地区", field: "address" },
-          { label: "角色", field: "role", width: "120" }
+          { label: "角色", field: "role", width: "120" },
+          {
+            label: "禁启用状态",
+            field: "status",
+            width: "120",
+            columnType: "slot"
+          }
         ]
       }
     });
