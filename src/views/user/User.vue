@@ -12,7 +12,22 @@
     </el-row>
     <div class="table-data">
       <table-data :config="dataSet.configTable">
-        <template>adasfa </template>
+        <template v-slot:status="slotData"
+          ><el-switch
+            v-model="slotData.data.name"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+          >
+          </el-switch>
+        </template>
+        <template v-slot:operation="slotData"
+          ><el-button type="success" @click="operation(slotData.data)"
+            >编辑</el-button
+          >
+          <el-button type="danger" @click="operation(slotData.data)"
+            >删除</el-button
+          >
+        </template>
       </table-data>
     </div>
   </div>
@@ -42,18 +57,40 @@ export default {
           { label: "用户名", field: "email", width: "150" },
           { label: "真实姓名", field: "name", width: "120" },
           { label: "手机号", field: "phone", width: "150" },
-          { label: "地区", field: "address" },
+          { label: "地区", field: "address", width: "200" },
           { label: "角色", field: "role", width: "120" },
           {
             label: "禁启用状态",
             field: "status",
             width: "120",
-            columnType: "slot"
+            columnType: "slot",
+            slotName: "status"
+          },
+          {
+            label: "操作",
+            width: "200",
+            columnType: "slot",
+            slotName: "operation"
           }
-        ]
+        ],
+        // 请求接口
+        requestData: {
+          url: "getUserList",
+          method: "post",
+          data: {
+            pageNumber: 1,
+            pageSize: 10
+          }
+        }
       }
     });
-    return { dataSet };
+    /**
+     * 方法
+     */
+    const operation = params => {
+      console.log(params);
+    };
+    return { dataSet, operation };
   }
 };
 </script>

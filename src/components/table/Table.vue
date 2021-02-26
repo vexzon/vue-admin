@@ -1,5 +1,10 @@
 <template>
-  <el-table :data="dataSet.tableData" border style="width:100%">
+  <el-table
+    :data="dataSet.tableData"
+    border
+    style="width:100%"
+    :cell-style="{ 'text-align': 'center' }"
+  >
     <!-- 多选框 -->
     <el-table-column
       v-if="dataSet.tableConfig.selection"
@@ -15,7 +20,9 @@
         :width="item.width"
         v-if="item.columnType === 'slot'"
       >
-        <template><slot></slot> </template>
+        <template slot-scope="scope"
+          ><slot :name="item.slotName" :data="scope.row"></slot>
+        </template>
       </el-table-column>
       <!-- 文本渲染 -->
       <el-table-column
@@ -30,6 +37,8 @@
 </template>
 <script>
 import { onBeforeMount, reactive } from "@vue/composition-api";
+import { requestUrl } from "@/api/requestUrl";
+import { loadTableData } from "@/api/common";
 export default {
   name: "Table",
   props: {
@@ -43,43 +52,51 @@ export default {
       tableConfig: {
         selection: true,
         recordCheckbox: false,
+        requestData: {},
         tHead: []
       },
-      tableData: [
-        {
-          email: "asd",
-          name: "王小虎",
-          phone: 11,
-          address: "ada",
-          role: "上海萨达"
-        },
-        {
-          email: "asd",
-          name: "王小虎",
-          phone: 111,
-          address: "ada",
-          role: "上海萨达"
-        }
-      ]
+      tableData: []
     });
     /*
      * 方法
      */
+    let loadData = () => {
+      let requsetJson = dataSet.tableConfig.requestData;
+      let requestData = {
+        url: requestUrl[requsetJson.url],
+        method: requsetJson.method,
+        data: requsetJson.data
+      };
+      loadTableData(requestData)
+        .then(res => {
+          let resData = res.data.data.data;
+          if (resData && resData.length > 0) {
+            dataSet.tableData = resData;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    };
     const initTableConfig = () => {
       let configData = props.config;
+      let keys = Object.keys(dataSet.tableConfig);
       for (let key in configData) {
-        if (dataSet.tableConfig[key]) {
+        // includes 检测数组内是否包含对应的数据
+        if (keys.includes(key)) {
           dataSet.tableConfig[key] = configData[key];
         }
       }
     };
     onBeforeMount(() => {
       initTableConfig();
+      loadData();
     });
 
     return {
       dataSet,
       // 方法
+      loadData,
       initTableConfig
     };
   }

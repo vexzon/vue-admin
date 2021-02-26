@@ -1,5 +1,6 @@
 import { reactive } from "@vue/composition-api";
 import { GetCategory, GetCategoryAll } from "@/api/news";
+import service from "@/utils/request";
 
 export function common() {
   // 声明变量，存储数据
@@ -40,4 +41,13 @@ export function common() {
     getInfoCategoryAll,
     categoryItem
   };
+}
+
+// 请求表格数据
+export function loadTableData(params) {
+  return service.request({
+    method: params.method || "post",
+    url: params.url,
+    data: params.data || {}
+  });
 }
