@@ -54,7 +54,7 @@ export default {
         recordCheckbox: true,
         // 表头
         tHead: [
-          { label: "用户名", field: "email", width: "150" },
+          { label: "用户名", field: "title", width: "150" },
           { label: "真实姓名", field: "name", width: "120" },
           { label: "手机号", field: "phone", width: "150" },
           { label: "地区", field: "address", width: "200" },
@@ -81,7 +81,8 @@ export default {
             pageNumber: 1,
             pageSize: 10
           }
-        }
+        },
+        pagination: true
       }
     });
     /**
