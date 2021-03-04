@@ -143,7 +143,6 @@ export default {
     };
     return {
       dataSet,
-
       close,
       openDialog,
       submit
