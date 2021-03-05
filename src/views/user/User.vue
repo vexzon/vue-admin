@@ -7,7 +7,12 @@
       <el-col :span="1"><el-button type="danger">搜索</el-button></el-col>
       <el-col :span="9"><el-button class="hide"></el-button></el-col>
       <el-col :span="4">
-        <el-button type="danger" class="pull-right">新增用户</el-button>
+        <el-button
+          type="danger"
+          class="pull-right"
+          @click="dataSet.dialog_add = true"
+          >新增用户</el-button
+        >
       </el-col>
     </el-row>
     <div class="table-data">
@@ -30,21 +35,25 @@
         </template>
       </table-data>
     </div>
+    <dialog-add :flag.sync="dataSet.dialog_add"></dialog-add>
   </div>
 </template>
 <script>
 import { reactive } from "@vue/composition-api";
 import SearchSelect from "@/components/select/SearchSelect";
 import TableData from "@/components/table/Table";
+import DialogAdd from "./dialog/add";
 export default {
   name: "User",
   components: {
     SearchSelect,
-    TableData
+    TableData,
+    DialogAdd
   },
 
   setup() {
     const dataSet = reactive({
+      dialog_add: false,
       configOption: { init: ["name", "phone", "email"] },
       // table 组件配置
       configTable: {

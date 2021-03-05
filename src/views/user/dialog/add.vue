@@ -9,41 +9,48 @@
       @opened="openDialog"
     >
       <el-form :model="dataSet.form" ref="addInfoForm">
-        <el-form-item label="类别" :label-width="dataSet.formLabelWidth">
-          <el-select
-            v-model="dataSet.form.categoryId"
-            placeholder="请选择活动区域"
-          >
-            <el-option
-              v-for="item in dataSet.categoryOption"
-              :key="item.id"
-              :label="item.category_name"
-              :value="item.id"
-            ></el-option>
-          </el-select>
+        <el-form-item
+          label="用户名:"
+          :label-width="dataSet.formLabelWidth"
+          prop="category"
+        >
+          <el-input placeholder="请输入用户名"></el-input>
         </el-form-item>
 
         <el-form-item
-          label="标题"
+          label="姓名:"
           :label-width="dataSet.formLabelWidth"
           prop="title"
         >
-          <el-input
-            v-model="dataSet.form.title"
-            placeholder="请输入内容"
-          ></el-input>
+          <el-input></el-input>
         </el-form-item>
         <el-form-item
-          label="概况"
+          label="手机号:"
           :label-width="dataSet.formLabelWidth"
           prop="content"
         >
-          <el-input
-            type="textarea"
-            v-model="dataSet.form.content"
-            placeholder="请输入内容"
-            :autosize="{ minRows: 2, maxRows: 4 }"
-          ></el-input>
+          <el-input></el-input>
+        </el-form-item>
+        <el-form-item
+          label="地区:"
+          :label-width="dataSet.formLabelWidth"
+          prop="content"
+        >
+          <city-picker></city-picker>
+        </el-form-item>
+        <el-form-item
+          label="禁启用:"
+          :label-width="dataSet.formLabelWidth"
+          prop="content"
+        >
+          <el-input></el-input>
+        </el-form-item>
+        <el-form-item
+          label="角色:"
+          :label-width="dataSet.formLabelWidth"
+          prop="content"
+        >
+          <el-input></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -61,9 +68,11 @@
 <script>
 import { reactive, watchEffect } from "@vue/composition-api";
 import { AddInfo } from "@/api/news";
-
+// 组件
+import CityPicker from "@/components/city-picker/index";
 export default {
   name: "InfoDialog",
+  components: { CityPicker },
   props: {
     flag: {
       type: Boolean,
@@ -78,7 +87,7 @@ export default {
     // 数据
     const dataSet = reactive({
       dialogInfoFlag: true, //弹窗标记
-      formLabelWidth: "50px",
+      formLabelWidth: "80px",
       submitLoading: false, // 按钮加载状态，避免连点
       // form表单
       form: {
