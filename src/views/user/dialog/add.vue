@@ -36,7 +36,9 @@
           :label-width="dataSet.formLabelWidth"
           prop="content"
         >
-          <city-picker></city-picker>
+          <city-picker
+            :cityPickerData.sync="dataSet.cityPickerData"
+          ></city-picker>
         </el-form-item>
         <el-form-item
           label="禁启用:"
@@ -87,6 +89,7 @@ export default {
     // 数据
     const dataSet = reactive({
       dialogInfoFlag: true, //弹窗标记
+      cityPickerData: {}, //城市数据
       formLabelWidth: "80px",
       submitLoading: false, // 按钮加载状态，避免连点
       // form表单
