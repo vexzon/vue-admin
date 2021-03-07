@@ -138,6 +138,7 @@ export default {
         dataSet[item] = "";
       });
     };
+
     // 获取省份
     getProvince();
 
