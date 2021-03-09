@@ -132,6 +132,7 @@ export default {
         area: ["areaValue", "streetValue"],
         street: ["streetValue"]
       };
+
       // 清空指定的key值
       const arrObj = valueJson[params.type];
       arrObj.forEach(item => {
