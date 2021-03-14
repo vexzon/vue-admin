@@ -1,5 +1,5 @@
 <template>
   <div>
-    打发十分
+    打发uoi
   </div>
 </template>
