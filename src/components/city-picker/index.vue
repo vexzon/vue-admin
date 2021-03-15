@@ -2,7 +2,7 @@
   <div>
     <el-row :gutter="5">
       <div class="overflow-h">
-        <el-col :span="6">
+        <el-col :span="6" v-if="init.province">
           <el-select v-model="dataSet.provinceValue" @change="handlerProvince">
             <el-option
               v-for="item in dataSet.provinceData"
@@ -12,7 +12,7 @@
             ></el-option>
           </el-select>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="6" v-if="init.city">
           <el-select v-model="dataSet.cityValue" @change="handlerCity">
             <el-option
               v-for="item in dataSet.cityData"
@@ -22,7 +22,7 @@
             ></el-option>
           </el-select>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="6" v-if="init.area">
           <el-select v-model="dataSet.areaValue" @change="handlerArea">
             <el-option
               v-for="item in dataSet.areaData"
@@ -32,7 +32,7 @@
             ></el-option>
           </el-select>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="6" v-if="init.street">
           <el-select v-model="dataSet.streetValue">
             <el-option
               v-for="item in dataSet.streetData"
@@ -47,17 +47,29 @@
   </div>
 </template>
 <script>
-import { reactive } from "@vue/composition-api";
+import { onBeforeMount, reactive } from "@vue/composition-api";
 import { GetCityPicker } from "@/api/common";
 export default {
   name: "CityPicker",
   props: {
+    cityPickerLevel: {
+      type: Array,
+      default: () => []
+    },
     cityPickerData: {
       type: Object,
       default: () => {}
     }
   },
-  setup() {
+  setup(props) {
+    // 初始化省市区街联动
+    const init = reactive({
+      province: false,
+      city: false,
+      area: false,
+      street: false
+    });
+    //时间方法
     const dataSet = reactive({
       provinceValue: "",
       provinceData: [],
@@ -68,6 +80,22 @@ export default {
       streetValue: "",
       streetData: []
     });
+
+    /**
+     * 初始化
+     */
+    const initCityPicker = () => {
+      let initData = props.cityPickerLevel;
+      if (initData.length == 0) {
+        init.forEach(item => {
+          init[item] = true;
+        });
+      } else {
+        initData.forEach(item => {
+          init[item] = true;
+        });
+      }
+    };
 
     /**
      * 获取省份
@@ -141,8 +169,12 @@ export default {
       });
     };
 
-    // 获取省份
-    getProvince();
+    onBeforeMount(() => {
+      // 初始化
+      initCityPicker();
+      // 获取省份
+      getProvince();
+    });
 
     return {
       dataSet,
@@ -150,7 +182,8 @@ export default {
       handlerProvince,
       handlerCity,
       handlerArea,
-      resetValue
+      resetValue,
+      init
     };
   }
 };

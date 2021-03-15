@@ -37,6 +37,7 @@
           prop="content"
         >
           <city-picker
+            :cityPickerLevel="['province', 'city', 'area', 'street']"
             :cityPickerData.sync="dataSet.cityPickerData"
           ></city-picker>
         </el-form-item>
@@ -45,14 +46,22 @@
           :label-width="dataSet.formLabelWidth"
           prop="content"
         >
-          <el-input></el-input>
+          <el-radio v-model="dataSet.roleStatus" label="1">禁用</el-radio>
+          <el-radio v-model="dataSet.roleStatus" label="2">启用</el-radio>
         </el-form-item>
         <el-form-item
           label="角色:"
           :label-width="dataSet.formLabelWidth"
           prop="content"
         >
-          <el-input></el-input>
+          <el-checkbox-group v-model="dataSet.roleCode">
+            <el-checkbox
+              v-for="item in dataSet.roleItem"
+              :key="item.role"
+              :label="item.role"
+              >{{ item.name }}</el-checkbox
+            >
+          </el-checkbox-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -70,6 +79,7 @@
 <script>
 import { reactive, watchEffect } from "@vue/composition-api";
 import { AddInfo } from "@/api/news";
+import { GetRole } from "@/api/user";
 // 组件
 import CityPicker from "@/components/city-picker/index";
 export default {
@@ -101,8 +111,26 @@ export default {
         status: "",
         content: ""
       },
+      // 是否启用状态
+      roleStatus: "1",
+      //角色
+      roleCode: [],
+      //角色选项
+      roleItem: [],
       categoryOption: [] // 分类下拉数据
     });
+    /**
+     * 请求角色
+     */
+    const getRole = () => {
+      GetRole()
+        .then(res => {
+          dataSet.roleItem = res.data.data;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    };
 
     // watch
     watchEffect(() => {
@@ -115,9 +143,9 @@ export default {
       emit("update:flag", false);
     };
 
-    // 打开新增菜单的时候传入数据
+    // 打开窗口动画结束时执行
     const openDialog = () => {
-      dataSet.categoryOption = props.category;
+      getRole();
     };
     const submit = () => {
       let requsetData = {
