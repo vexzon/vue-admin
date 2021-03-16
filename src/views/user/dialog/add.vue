@@ -12,29 +12,47 @@
         <el-form-item
           label="用户名:"
           :label-width="dataSet.formLabelWidth"
-          prop="category"
+          prop="username"
         >
-          <el-input placeholder="请输入用户名"></el-input>
+          <el-input
+            v-model="dataSet.form.username"
+            placeholder="请输入用户名"
+          ></el-input>
         </el-form-item>
-
         <el-form-item
           label="姓名:"
           :label-width="dataSet.formLabelWidth"
-          prop="title"
+          prop="truename"
         >
-          <el-input></el-input>
+          <el-input
+            v-model="dataSet.form.truename"
+            placeholder="请输入真实姓名"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="密码:"
+          :label-width="dataSet.formLabelWidth"
+          prop="password"
+        >
+          <el-input
+            v-model="dataSet.form.password"
+            placeholder="请输入密码"
+          ></el-input>
         </el-form-item>
         <el-form-item
           label="手机号:"
           :label-width="dataSet.formLabelWidth"
-          prop="content"
+          prop="phone"
         >
-          <el-input></el-input>
+          <el-input
+            v-model.number="dataSet.form.phone"
+            placeholder="请输入手机号"
+          ></el-input>
         </el-form-item>
         <el-form-item
           label="地区:"
           :label-width="dataSet.formLabelWidth"
-          prop="content"
+          prop="region"
         >
           <city-picker
             :cityPickerLevel="['province', 'city', 'area', 'street']"
@@ -44,17 +62,17 @@
         <el-form-item
           label="禁启用:"
           :label-width="dataSet.formLabelWidth"
-          prop="content"
+          prop="status"
         >
-          <el-radio v-model="dataSet.roleStatus" label="1">禁用</el-radio>
-          <el-radio v-model="dataSet.roleStatus" label="2">启用</el-radio>
+          <el-radio v-model="dataSet.form.status" label="1">禁用</el-radio>
+          <el-radio v-model="dataSet.form.status" label="2">启用</el-radio>
         </el-form-item>
         <el-form-item
           label="角色:"
           :label-width="dataSet.formLabelWidth"
-          prop="content"
+          prop="role"
         >
-          <el-checkbox-group v-model="dataSet.roleCode">
+          <el-checkbox-group v-model="dataSet.form.role">
             <el-checkbox
               v-for="item in dataSet.roleItem"
               :key="item.role"
@@ -77,9 +95,9 @@
   </div>
 </template>
 <script>
-import { reactive, watchEffect } from "@vue/composition-api";
-import { AddInfo } from "@/api/news";
-import { GetRole } from "@/api/user";
+import { reactive, watch } from "@vue/composition-api";
+
+import { GetRole, UserAdd } from "@/api/user";
 // 组件
 import CityPicker from "@/components/city-picker/index";
 export default {
@@ -95,7 +113,7 @@ export default {
       default: () => []
     }
   },
-  setup(props, { emit, root, refs }) {
+  setup(props, { emit, root }) {
     // 数据
     const dataSet = reactive({
       dialogInfoFlag: true, //弹窗标记
@@ -104,21 +122,22 @@ export default {
       submitLoading: false, // 按钮加载状态，避免连点
       // form表单
       form: {
-        categoryId: "",
-        title: "",
-        imgUrl: "",
-        createDate: "",
-        status: "",
-        content: ""
+        username: "",
+        truename: "",
+        password: "",
+        phone: "",
+        region: "",
+        status: "1",
+        role: []
       },
-      // 是否启用状态
-      roleStatus: "1",
-      //角色
-      roleCode: [],
       //角色选项
-      roleItem: [],
-      categoryOption: [] // 分类下拉数据
+      roleItem: []
     });
+
+    // 监听
+    watch(() => (dataSet.dialogInfoFlag = props.flag));
+    // 方法
+
     /**
      * 请求角色
      */
@@ -132,55 +151,51 @@ export default {
         });
     };
 
-    // watch
-    watchEffect(() => {
-      dataSet.dialogInfoFlag = props.flag;
-    });
-
-    // 方法
     const close = () => {
       dataSet.dialogInfoFlag = false;
       emit("update:flag", false);
     };
 
+    /**
+     *
+     */
+    const submit = () => {
+      if (dataSet.form.username) {
+        root.$message({
+          message: "用户名不能为空",
+          type: "error"
+        });
+        return false;
+      }
+      if (dataSet.form.password) {
+        root.$message({
+          message: "密码不能为空",
+          type: "error"
+        });
+        return false;
+      }
+      if (dataSet.form.role.length === 0) {
+        root.$message({
+          message: "请选择角色",
+          type: "error"
+        });
+        return false;
+      }
+
+      // 添加用户
+      UserAdd()
+        .then(res => {
+          console.log(res.data.data);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    };
     // 打开窗口动画结束时执行
     const openDialog = () => {
       getRole();
     };
-    const submit = () => {
-      let requsetData = {
-        categoryId: dataSet.form.categoryId,
-        title: dataSet.form.title,
-        content: dataSet.form.content
-      };
-      // 在本地判断是否选了类型
-      if (!dataSet.form.categoryId) {
-        root.$message({
-          message: "分类不能为空",
-          type: "warning"
-        });
-        return false;
-      }
-      dataSet.submitLoading = true;
-      AddInfo(requsetData)
-        .then(res => {
-          let resData = res.data;
-          root.$message({
-            message: resData.message,
-            type: "success"
-          });
-          dataSet.submitLoading = false;
-          // 重置表单
-          refs.addInfoForm.resetFields();
-          // 刷新列表
-          emit("addGetListEmit");
-          close();
-        })
-        .catch(err => {
-          console.log(err);
-          dataSet.submitLoading = false;
-        });
-    };
+
     return {
       dataSet,
       close,

@@ -9,3 +9,12 @@ export function GetRole(data) {
     data
   });
 }
+
+// 添加用户
+export function UserAdd(data) {
+  return service.request({
+    method: "post",
+    url: "/user/add/",
+    data
+  });
+}
