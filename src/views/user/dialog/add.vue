@@ -191,6 +191,7 @@ export default {
           console.log(err);
         });
     };
+
     // 打开窗口动画结束时执行
     const openDialog = () => {
       getRole();
