@@ -1,5 +1,5 @@
 <template>
   <div>
-    打发uoi和焦点访谈㨒第三方啊
+    打发uoi和焦点访谈
   </div>
 </template>
