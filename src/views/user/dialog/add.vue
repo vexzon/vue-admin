@@ -36,6 +36,7 @@
         >
           <el-input
             v-model="dataSet.form.password"
+            type="password"
             placeholder="请输入密码"
           ></el-input>
         </el-form-item>
@@ -161,14 +162,14 @@ export default {
      *
      */
     const submit = () => {
-      if (dataSet.form.username) {
+      if (!dataSet.form.username) {
         root.$message({
           message: "用户名不能为空",
           type: "error"
         });
         return false;
       }
-      if (dataSet.form.password) {
+      if (!dataSet.form.password) {
         root.$message({
           message: "密码不能为空",
           type: "error"
@@ -182,6 +183,8 @@ export default {
         });
         return false;
       }
+      let requsetData = dataSet.form;
+      console.log(requsetData);
 
       // 添加用户
       UserAdd()
