@@ -159,7 +159,7 @@ export default {
     };
 
     /**
-     *
+     * 提交验证
      */
     const submit = () => {
       if (!dataSet.form.username) {
