@@ -33,7 +33,7 @@
           </el-select>
         </el-col>
         <el-col :span="6" v-if="init.street">
-          <el-select v-model="dataSet.streetValue">
+          <el-select v-model="dataSet.streetValue" @change="handlerStreet">
             <el-option
               v-for="item in dataSet.streetData"
               :key="item.STREET_CODE"
@@ -47,7 +47,7 @@
   </div>
 </template>
 <script>
-import { onBeforeMount, reactive } from "@vue/composition-api";
+import { onBeforeMount, reactive, watch } from "@vue/composition-api";
 import { GetCityPicker } from "@/api/common";
 export default {
   name: "CityPicker",
@@ -61,7 +61,7 @@ export default {
       default: () => {}
     }
   },
-  setup(props) {
+  setup(props, { emit }) {
     // 初始化省市区街联动
     const init = reactive({
       province: false,
@@ -79,6 +79,13 @@ export default {
       areaData: [],
       streetValue: "",
       streetData: []
+    });
+
+    const resultData = reactive({
+      provinceValue: "",
+      cityValue: "",
+      areaValue: "",
+      streetValue: ""
     });
 
     /**
@@ -151,6 +158,14 @@ export default {
           console.log(err);
         });
     };
+    const handlerStreet = () => {
+      resetValue({ type: " " });
+    };
+
+    // 返回城市数据
+    const result = () => {
+      for (let key in resultData) resultData[key] = dataSet[key];
+    };
 
     /**
      *重置
@@ -164,10 +179,36 @@ export default {
 
       // 清空指定的key值
       const arrObj = valueJson[params.type];
-      arrObj.forEach(item => {
-        dataSet[item] = "";
-      });
+      if (arrObj) {
+        arrObj.forEach(item => (dataSet[item] = ""));
+      }
+      // 数据集合处理
+      result();
     };
+    // 监听
+    watch(
+      [
+        () => resultData.provinceValue,
+        () => resultData.cityValue,
+        () => resultData.areaValue,
+        () => resultData.streetValue
+      ],
+      ([province, city, area, street]) => {
+        emit("update:cityPickerData", resultData);
+        console.log(province);
+        console.log(city);
+        console.log(area);
+        console.log(street);
+      }
+      // resultData => {
+      //   emit("update:cityPickerData", resultData);
+      // console.log(resultData);
+      // // console.log(province);
+      // // console.log(city);
+      // // console.log(area);
+      // // console.log(street);
+      // }
+    );
 
     onBeforeMount(() => {
       // 初始化
@@ -177,6 +218,8 @@ export default {
     });
 
     return {
+      handlerStreet,
+      resultData,
       dataSet,
       getProvince,
       handlerProvince,

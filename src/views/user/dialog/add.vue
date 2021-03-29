@@ -14,19 +14,10 @@
           :label-width="dataSet.formLabelWidth"
           prop="username"
         >
+          {{ dataSet.form.username }}
           <el-input
             v-model="dataSet.form.username"
-            placeholder="请输入用户名"
-          ></el-input>
-        </el-form-item>
-        <el-form-item
-          label="姓名:"
-          :label-width="dataSet.formLabelWidth"
-          prop="truename"
-        >
-          <el-input
-            v-model="dataSet.form.truename"
-            placeholder="请输入真实姓名"
+            placeholder="请输入邮箱"
           ></el-input>
         </el-form-item>
         <el-form-item
@@ -34,10 +25,21 @@
           :label-width="dataSet.formLabelWidth"
           prop="password"
         >
+          {{ dataSet.form.password }}
           <el-input
             v-model="dataSet.form.password"
             type="password"
             placeholder="请输入密码"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="姓名:"
+          :label-width="dataSet.formLabelWidth"
+          prop="truename"
+          >{{ dataSet.form.truename }}
+          <el-input
+            v-model="dataSet.form.truename"
+            placeholder="请输入真实姓名"
           ></el-input>
         </el-form-item>
         <el-form-item
@@ -55,6 +57,7 @@
           :label-width="dataSet.formLabelWidth"
           prop="region"
         >
+          <!-- 加sync，反向修改 -->
           <city-picker
             :cityPickerLevel="['province', 'city', 'area', 'street']"
             :cityPickerData.sync="dataSet.cityPickerData"
@@ -114,7 +117,7 @@ export default {
       default: () => []
     }
   },
-  setup(props, { emit, root }) {
+  setup(props, { emit, root, refs }) {
     // 数据
     const dataSet = reactive({
       dialogInfoFlag: true, //弹窗标记
@@ -124,8 +127,8 @@ export default {
       // form表单
       form: {
         username: "",
-        truename: "",
         password: "",
+        truename: "",
         phone: "",
         region: "",
         status: "1",
@@ -155,9 +158,14 @@ export default {
 
     const close = () => {
       dataSet.dialogInfoFlag = false;
+      resetForm();
       emit("update:flag", false);
     };
-
+    // 清除
+    const resetForm = () => {
+      dataSet.cityPickerData = {};
+      refs.addInfoForm.resetFields();
+    };
     /**
      * 提交验证
      */
@@ -181,15 +189,28 @@ export default {
           message: "请选择角色",
           type: "error"
         });
+
         return false;
       }
-      let requsetData = dataSet.form;
-      console.log(requsetData);
+
+      /**
+       *  深拷贝 JSON.stringify(requestData)   //字符串，再转换为JSON对象
+       *  浅拷贝 Object.assign({},dataSet.from)   // 拷贝出来的是对象
+       *
+       *
+       */
+
+      // 数据处理
+      // let requestData = JSON.parse(JSON.stringify(dataSet.form));
+      let requestData = Object.assign({}, dataSet.form);
+      requestData.role = requestData.role.join(); //将数组转成字符串
+      requestData.region = JSON.stringify(dataSet.cityPickerData);
 
       // 添加用户
-      UserAdd()
+      UserAdd(requestData)
         .then(res => {
           console.log(res.data.data);
+          resetForm();
         })
         .catch(err => {
           console.log(err);
