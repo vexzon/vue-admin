@@ -19,7 +19,9 @@
       <table-data :config="dataSet.configTable">
         <template v-slot:status="slotData"
           ><el-switch
-            v-model="slotData.data.name"
+            v-model="slotData.data.status"
+            active-value="2"
+            inactive-value="1"
             active-color="#13ce66"
             inactive-color="#ff4949"
           >
@@ -32,6 +34,9 @@
           <el-button type="danger" @click="operation(slotData.data)"
             >删除</el-button
           >
+        </template>
+        <template v-slot:tableFooterLeft
+          ><el-button>批量删除</el-button>
         </template>
       </table-data>
     </div>
@@ -58,15 +63,15 @@ export default {
       // table 组件配置
       configTable: {
         // 多选框
-        selection: false,
+        selection: true,
         // 翻页记录
         recordCheckbox: true,
         // 表头
         tHead: [
-          { label: "用户名", field: "title", width: "150" },
-          { label: "真实姓名", field: "name", width: "120" },
+          { label: "用户名", field: "username", width: "150" },
+          { label: "真实姓名", field: "truename", width: "120" },
           { label: "手机号", field: "phone", width: "150" },
-          { label: "地区", field: "address", width: "200" },
+          { label: "地区", field: "region", width: "200" },
           { label: "角色", field: "role", width: "120" },
           {
             label: "禁启用状态",

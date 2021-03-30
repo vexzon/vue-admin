@@ -68,8 +68,8 @@
           :label-width="dataSet.formLabelWidth"
           prop="status"
         >
-          <el-radio v-model="dataSet.form.status" label="1">禁用</el-radio>
           <el-radio v-model="dataSet.form.status" label="2">启用</el-radio>
+          <el-radio v-model="dataSet.form.status" label="1">禁用</el-radio>
         </el-form-item>
         <el-form-item
           label="角色:"
@@ -104,6 +104,7 @@ import { reactive, watch } from "@vue/composition-api";
 import { GetRole, UserAdd } from "@/api/user";
 // 组件
 import CityPicker from "@/components/city-picker/index";
+import sha1 from "js-sha1";
 export default {
   name: "InfoDialog",
   components: { CityPicker },
@@ -205,11 +206,18 @@ export default {
       let requestData = Object.assign({}, dataSet.form);
       requestData.role = requestData.role.join(); //将数组转成字符串
       requestData.region = JSON.stringify(dataSet.cityPickerData);
+      // 加密
+      requestData.password = sha1(requestData.password);
 
       // 添加用户
       UserAdd(requestData)
         .then(res => {
-          console.log(res.data.data);
+          let data = res.data.data;
+          console.log(data);
+          root.$message({
+            message: data.message,
+            type: "success"
+          });
           resetForm();
         })
         .catch(err => {

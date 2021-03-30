@@ -36,19 +36,26 @@
         ></el-table-column>
       </template>
     </el-table>
-    <!-- 分页 -->
-    <el-pagination
-      v-if="dataSet.tableConfig.pagination"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="pageData.currentPage"
-      :page-sizes="pageData.pageSizes"
-      :page-size="pageData.pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="pageData.total"
-      background
-    >
-    </el-pagination>
+    <div class="table-footer">
+      <el-row>
+        <el-col :span="4"><slot name="tableFooterLeft"></slot> </el-col>
+        <el-col :span="20" class="pull-right">
+          <!-- 分页 -->
+          <el-pagination
+            v-if="dataSet.tableConfig.pagination"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="pageData.currentPage"
+            :page-sizes="pageData.pageSizes"
+            :page-size="pageData.pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="pageData.total"
+            background
+          >
+          </el-pagination
+        ></el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 <script>
@@ -136,4 +143,11 @@ export default {
   }
 };
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.pull-right {
+  text-align: right;
+}
+.table-footer {
+  padding: 20px;
+}
+</style>

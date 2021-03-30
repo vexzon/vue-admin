@@ -50,6 +50,7 @@ export default {
   display: flex;
   justify-content: space-between;
   @include webkit(transition, all 0.3s ease 0s);
+  z-index: 9;
 }
 .open {
   #header-wrap {
