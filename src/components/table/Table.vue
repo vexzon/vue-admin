@@ -120,6 +120,7 @@ export default {
       let configData = props.config;
       let keys = Object.keys(dataSet.tableConfig);
       for (let key in configData) {
+        
         // includes 检测数组内是否包含对应的数据
         if (keys.includes(key)) {
           dataSet.tableConfig[key] = configData[key];

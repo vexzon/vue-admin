@@ -167,6 +167,7 @@ export default {
       dataSet.cityPickerData = {};
       refs.addInfoForm.resetFields();
     };
+
     /**
      * 提交验证
      */

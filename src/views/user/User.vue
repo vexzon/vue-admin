@@ -23,7 +23,7 @@
             active-value="2"
             inactive-value="1"
             active-color="#13ce66"
-            inactive-color="#ff4949"
+            inactive-color="#ff4949" 
           >
           </el-switch>
         </template>
