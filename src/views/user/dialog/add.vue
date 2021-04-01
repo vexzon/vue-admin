@@ -203,6 +203,7 @@ export default {
        */
 
       // 数据处理
+
       // let requestData = JSON.parse(JSON.stringify(dataSet.form));
       let requestData = Object.assign({}, dataSet.form);
       requestData.role = requestData.role.join(); //将数组转成字符串
