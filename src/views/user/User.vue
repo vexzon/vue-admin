@@ -23,7 +23,7 @@
             active-value="2"
             inactive-value="1"
             active-color="#13ce66"
-            inactive-color="#ff4949" 
+            inactive-color="#ff4949"
           >
           </el-switch>
         </template>
@@ -60,6 +60,7 @@ export default {
     const dataSet = reactive({
       dialog_add: false,
       configOption: { init: ["name", "phone", "email"] },
+
       // table 组件配置
       configTable: {
         // 多选框
