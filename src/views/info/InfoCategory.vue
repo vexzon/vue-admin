@@ -62,6 +62,7 @@
             </ul>
           </div>
         </el-col>
+
         <!-- 添加删除分类模块 -->
         <el-col :span="14">
           <h4 class="menu-title" ref="categoryEditer">一级分类编辑</h4>
