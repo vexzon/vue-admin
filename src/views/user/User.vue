@@ -128,6 +128,7 @@ export default {
         fn: userDelete
       });
     };
+
     // 删除用户
     const userDelete = () => {
       UserDel({ id: dataSet.tableRow.idItem })
