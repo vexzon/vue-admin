@@ -16,7 +16,11 @@
       </el-col>
     </el-row>
     <div class="table-data">
-      <table-data :config="dataSet.configTable">
+      <table-data
+        ref="userTable"
+        :config="dataSet.configTable"
+        :tableRow.sync="dataSet.tableRow"
+      >
         <template v-slot:status="slotData"
           ><el-switch
             v-model="slotData.data.status"
@@ -28,15 +32,13 @@
           </el-switch>
         </template>
         <template v-slot:operation="slotData"
-          ><el-button type="success" @click="operation(slotData.data)"
-            >编辑</el-button
-          >
-          <el-button type="danger" @click="operation(slotData.data)"
+          ><el-button type="success">编辑</el-button>
+          <el-button type="danger" @click="handerDel(slotData.data)"
             >删除</el-button
           >
         </template>
         <template v-slot:tableFooterLeft
-          ><el-button>批量删除</el-button>
+          ><el-button @click="handerBatchDel()">批量删除</el-button>
         </template>
       </table-data>
     </div>
@@ -45,9 +47,14 @@
 </template>
 <script>
 import { reactive } from "@vue/composition-api";
+import { UserDel } from "@/api/user";
+
+// 组件
 import SearchSelect from "@/components/select/SearchSelect";
 import TableData from "@/components/table/Table";
 import DialogAdd from "./dialog/add";
+import { global } from "@/utils/global";
+
 export default {
   name: "User",
   components: {
@@ -56,8 +63,11 @@ export default {
     DialogAdd
   },
 
-  setup() {
+  setup(props, { root, refs }) {
+    const { confirm } = global();
     const dataSet = reactive({
+      // table选择的数据
+      tableRow: {},
       dialog_add: false,
       configOption: { init: ["name", "phone", "email"] },
 
@@ -102,13 +112,47 @@ export default {
       }
     });
 
+    const handerBatchDel = () => {
+      let userId = dataSet.tableRow.idItem;
+      if (!userId || userId.length === 0) {
+        root.$message({
+          message: "请选择需要删除的内容",
+          type: "error"
+        });
+        return false;
+      }
+
+      confirm({
+        content: "确认删除当前信息",
+        tip: "警告",
+        fn: userDelete
+      });
+    };
+    // 删除用户
+    const userDelete = () => {
+      UserDel({ id: dataSet.tableRow.idItem })
+        .then(res => {
+          console.log(res.data.data);
+          refs.userTable.refreshData();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    };
+
     /**
      * 方法
      */
-    const operation = params => {
-      console.log(params);
+    const handerDel = params => {
+      dataSet.tableRow.idItem = [params.id];
+      confirm({
+        content: "确认删除当前信息",
+        tip: "警告",
+        fn: userDelete
+      });
     };
-    return { dataSet, operation };
+
+    return { dataSet, handerDel, handerBatchDel };
   }
 };
 </script>

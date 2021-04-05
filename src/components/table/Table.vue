@@ -6,6 +6,7 @@
       border
       style="width:100%"
       :cell-style="{ 'text-align': 'center' }"
+      @selection-change="thatSelectCheckbox"
     >
       <!-- 多选框 -->
       <el-table-column
@@ -68,9 +69,13 @@ export default {
     config: {
       type: Object,
       default: () => {}
+    },
+    tableRow: {
+      type: Object,
+      default: () => {}
     }
   },
-  setup(props, { root }) {
+  setup(props, { root, emit }) {
     // 加载数据
     const { tableData, tableLoadData } = loadData({ root });
     // 页码
@@ -120,13 +125,26 @@ export default {
       let configData = props.config;
       let keys = Object.keys(dataSet.tableConfig);
       for (let key in configData) {
-        
         // includes 检测数组内是否包含对应的数据
         if (keys.includes(key)) {
           dataSet.tableConfig[key] = configData[key];
         }
       }
     };
+
+    // 勾选checkbox时触发
+    const thatSelectCheckbox = value => {
+      // id，rowData
+      let rowData = {
+        idItem: value.map(item => item.id)
+      };
+      emit("update:tableRow", rowData);
+    };
+    // 刷新数据
+    const refreshData = () => {
+      tableLoadData(dataSet.tableConfig.requestData);
+    };
+
     onBeforeMount(() => {
       initTableConfig();
       tableLoadData(dataSet.tableConfig.requestData);
@@ -139,7 +157,9 @@ export default {
       pageData,
       handleSizeChange,
       handleCurrentChange,
-      totalCount
+      totalCount,
+      thatSelectCheckbox,
+      refreshData
     };
   }
 };
